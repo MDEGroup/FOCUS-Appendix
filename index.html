@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Focus - FunctiOn Calls and USage patterns</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <style>
+    hr.style2 {
+      border-top: 3px double #8c8b8b;
+    }
+  </style>
+</head>
+<body>
+
+<div class="jumbotron text-center">
+  <h1>Focus - FunctiOn Calls and USage patterns</h1>
+  <p>This page reports some Focus recommendation results</p> 
+</div>
+  
+<div class="container-fluid">
+  <div class=row>
+    <div class="col-sm-12">
+      <ul>
+        <li><a href="#query1">Query 1</a></li>
+        <li><a href="#query2">Query 2</a></li>
+        <li><a href="#query3">Query 3</a></li>
+    </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <h3>Context code</h3>
+    </div>
+    <div class="col-sm-4">
+      <h3>Code snippet Recommendations</h3>
+    </div>
+    <div class="col-sm-4">
+      <h3>API function call Recommendations</h3>
+    </div>
+  </div>
+  <hr class="style2">
+  <div class="row" id="query1">
+    <div class="col-sm-4">
+        <pre class="prettyprint">
+  public static void getSiteImages() throws IOException {
+    String url = "https://mysite.com/";
+    Document document = Jsoup.connect(url).get();
+    Elements images = document.select("img[src~=(?i)\\.(png|jpe?g|gif)]");
+    images.parents();
+    for (Element element : images) {
+      System.out.println(element);
+    }
+  }
+          </pre>
+    </div>
+    <div class="col-sm-4">
+      <div class="row">
+        <pre class="prettyprint">
+  protected String getCSSSource(String htmlSource) throws Exception {
+    org.jsoup.nodes.Document htmlDocument = Jsoup.parse(htmlSource);
+
+    Elements elements = htmlDocument.select("link[type=text/css]");
+
+    StringBuilder sb = new StringBuilder();
+
+    for (Element element : elements) {
+      String href = element.attr("href");
+
+      if (!href.contains(PropsValues.PORTAL_URL)) {
+        href = PropsValues.PORTAL_URL + href;
+      }
+
+      Connection connection = Jsoup.connect(href);
+
+      org.jsoup.nodes.Document document = connection.get();
+
+      sb.append(document.text());
+
+      sb.append("\n");
+    }
+
+    return sb.toString();
+  }
+        </pre>
+      </div>
+      <div class="row">
+        <pre class="prettyprint">
+    public void cmdExportChildren() throws Exception {
+        String path = cmdline.getOptionValue("znode");
+        String dir = cmdline.getOptionValue("dir");
+        List<String> kids = zkClient.getChildren(path);
+        System.out.println(kids);
+        for (String kid : kids) {
+            exportPath(path + "/" + kid, dir);
+        }
+    }
+        </pre>
+      </div>
+      <div class="row">
+        <pre class="prettyprint">
+      /*
+     * Bridge method used by donkey.js
+     */
+    public Document jsoup(String url) {
+        try {
+            filterHostBlocker();
+
+            URL u = new URL(url);
+            long li = lastInteraction.getOrDefault(u.getHost(), 0l);
+            long delta = System.currentTimeMillis() - li;
+            if (delta < 1000) {
+                Wait.randomMillis(1000, 2000);
+            }
+            lastInteraction.put(u.getHost(), System.currentTimeMillis());
+
+            return Jsoup.connect(url)
+                        .userAgent("Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)")
+                        .followRedirects(true)
+                        .get();
+        } catch (IOException e) {
+            Exceptions.handle(LOG, e);
+            return null;
+        }
+    }
+        </pre>
+      </div>
+      <div class="row">
+        <pre class="prettyprint">
+    /**
+     * getHtmlElement.
+     *
+     * @return a {@link org.jsoup.nodes.Element} object.
+     */
+    public Element getHtmlElement() {
+        if (this.html == null) {
+            Element htmlElement = null;
+            Document doc = Jsoup.parse(this.htmlText);
+            List&ltNode&gt htmlNodes = doc.childNodes();
+            Node firstNode = htmlNodes.get(0);
+            if (firstNode instanceof Element) {
+                Element element = (Element) firstNode;
+                Elements elements = element.select("body");
+                if (elements.size() > 0) {
+                    if (elements.first().children().size() == 1) {
+                        htmlElement = elements.first().child(0);
+                    }
+                }
+                if (htmlElement == null) {
+                    htmlElement = doc.child(0);
+                }
+            }
+            this.html = htmlElement;
+        }
+        return this.html;
+    }
+        </pre>
+      </div>
+      <div class="row">
+        <pre class="prettyprint">
+  public void testNullHMM() {
+    ATable at = new ATable(true, 1, 5);
+    int[] e1 = {-1,0,3,6};
+    int[]ef = {1,2,3,1,2,3};
+    TTable_monolithic tt = new TTable_monolithic(e1, ef, 4);
+    tt.set(0, 1, 0.1f);
+    tt.set(0, 2, 0.1f);
+    tt.set(0, 3, 0.8f);
+    tt.set(1, 1, 0.3f);
+    tt.set(1, 2, 0.7f);
+    tt.set(2, 1, 0.9f);
+    tt.set(2, 2, 0.1f);
+    at.add(1, 'a', 999, 0.3f);
+    at.add(0, 'a', 999, 0.5f);
+    at.add(-1, 'a', 999, 0.4f);
+    at.add(-2, 'a', 999, 0.2f);
+    at.normalize();
+    // System.out.println(at);
+    int[] fw = {1, 3, 2, 1};
+    //int[] fw = {2, 1, 2};
+    int[] ew = {2, 1, 2}; 
+    Phrase f = new Phrase(fw, 1);
+    Phrase e = new Phrase(ew, 1);
+    PhrasePair pp = new PhrasePair(f, e);
+    hmm = new HMM_NullWord(tt, at, -1.0);
+    hmm.buildHMMTables(pp);
+    hmm.baumWelch(pp, null);
+    TTable_monolithic tc = (TTable_monolithic)tt.clone(); tc.clear();
+    ATable ac = (ATable)at.clone(); ac.clear();
+    hmm.addPartialTranslationCountsToTTable(tc);
+    hmm.addPartialJumpCountsToATable(ac);
+    System.out.println("COUNTS:\n" + tc);
+    tc.normalize();
+    ac.normalize();
+    
+    PerplexityReporter cr = new PerplexityReporter();
+    Alignment a = hmm.viterbiAlign(pp, cr);
+    assertEquals(a.getELength(), e.size());
+    assertEquals(a.getFLength(), f.size());
+    AlignmentPosteriorGrid pg = hmm.computeAlignmentPosteriors(pp);
+    System.out.println(a.toStringVisual() + "\nPG:\n"+pg + "\n"+cr + "\n");
+    System.out.println(hmm.emission);
+    System.out.println(hmm.transition);
+    System.out.println("Done NULL");
+  }
+        </pre>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      
+      <ol>
+        <li>org.jsoup.Connection.userAgent(java.lang.String)</li>
+        <li>org.jsoup.nodes.Document.children()</li>
+        <li>org.jsoup.nodes.Document.select(java.lang.String)</li>
+        <li>org.jsoup.nodes.Element.children()</li>
+        <li>org.jsoup.select.Elements.attr(java.lang.String)</li>
+        <li>org.jsoup.select.Elements.first()</li>
+        <li>org.jsoup.select.Elements.html()</li>
+        <li>org.jsoup.select.Elements.iterator()</li>
+        <li>com.snicesoft.jsoupcrawler.config.entity.Column.function  (javax.script.Invocable,java.lang.String,java.lang.Object[])</li>
+        <li>com.snicesoft.jsoupcrawler.config.entity.Column.getAttr()</li>
+        <li>com.snicesoft.jsoupcrawler.config.entity.Column.getFun()</li>
+        <li>com.snicesoft.jsoupcrawler.config.entity.Column.getName()</li>
+        <li>com.snicesoft.jsoupcrawler.config.entity.Column.getTag()</li>
+        <li>com.snicesoft.jsoupcrawler.config.entity.Info.getColumns()</li>
+        <li>com.snicesoft.jsoupcrawler.config.entity.Info.getRootTag()</li>
+        <li>com.snicesoft.jsoupcrawler.core.ICrawler.getListener()</li>
+        <li>com.snicesoft.jsoupcrawler.core.ICrawler.getUrl (com.snicesoft.jsoupcrawler.config.entity.Info,int)</li>
+        <li>com.snicesoft.jsoupcrawler.core.ICrawler.userAgent()</li>
+        <li>com.snicesoft.jsoupcrawler.listener.DataAcceptListener.accept (com.snicesoft.jsoupcrawler.config.entity.Info,int,java.util.Map)</li>
+        <li>com.gargoylesoftware.htmlunit.WebClient.WebClient (com.gargoylesoftware.htmlunit.BrowserVersion)</li>
+      </ol>
+    </div>
+  </div>
+  <hr class="style2">
+
+  
+  <div class="row" id="query2">
+    <div class="col-sm-4">
+        <pre class="prettyprint">
+  public static void getNewsFromSoccerFanSite() throws IOException {
+    String url = "https://m.vocegiallorossa.it/";
+    Document document = Jsoup.connect(url).get();
+    Elements news = document.getElementsByClass("list");
+    news.append("<a>news</a>");
+    news.prepend("");
+    
+  }
+          </pre>
+    </div>
+    <div class="col-sm-4">
+      <div class="row">
+        <pre class="prettyprint">
+       
+    /**
+     * Sets the URL.
+     * @param    String    the URL 
+     * @return             true if connection to URL is successful 
+     */
+    public boolean connect(String url) {      
+      
+      try {
+        this.url = url;
+        this.document = Jsoup.connect(url).get();
+        
+        Path path = Paths.get(url);
+        
+        File rootFile = new File(this.htmlDirectory.getAbsolutePath() + "/" + path.getName(path.getNameCount() - 1));
+        FileUtils.copyURLToFile(new URL(url), rootFile);
+        
+        return true;
+        
+      } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+      }
+    }
+        </pre>
+      </div>
+      <div class="row">
+        <pre class="prettyprint">
+  private void getConnection(Info info, int position, String funName) {
+    try {
+      Document document = Jsoup.connect(getUrl(info, position)).userAgent(userAgent()).get();
+      Elements elements = null;
+      if (info.getRootTag() != null && !"".equals(info.getRootTag())) {
+        elements = document.select(info.getRootTag()).first().children();
+      } else {
+        elements = document.children();
+      }
+      for (Element ele : elements) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        for (Column column : info.getColumns()) {
+          Object data = null;
+          if (column.getAttr() == null || "html".equals(column.getAttr()))
+            data = ele.select(column.getTag()).html();
+          else
+            data = ele.select(column.getTag()).attr(column.getAttr());
+          if (column.getFun() != null && !"".equals(column.getFun()))
+            data = column.function(invocable, funName, data);
+          map.put(column.getName(), data);
+        }
+        if (getListener() != null) {
+          getListener().accept(info, position, map);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+        </pre>
+      </div>
+      <div class="row">
+        <pre class="prettyprint">
+    private void addCukedoctorCss(org.jsoup.nodes.Document document) {
+        List&ltString&gt files = FileUtil.findFiles(CUKEDOCTOR_CUSTOMIZATION_DIR, "cukedoctor.css", true);
+        if(files != null && !files.isEmpty()) {
+            String themePath = files.get(0);
+            themePath = themePath.replaceAll("\\\\","/");
+            try {
+                String customCss = IOUtils.toString(new FileInputStream(themePath));
+                Elements head = document.getElementsByTag("head");
+                head.append(" &ltstyle&gt "+customCss);
+            } catch (IOException e) {
+                log.log(Level.SEVERE, "Could not copy cukedoctor css from: " + themePath, e);
+            }
+        }
+    }
+        </pre>
+      </div>
+      <div class="row">
+        <pre class="prettyprint">
+    private void populateQuotes() {
+        Document doc;
+        String quoteId = null;
+        String quoteScore = null;
+
+        try {
+            doc = Jsoup.connect("http://bash.org/?random1").get();
+        } catch (IOException e) {
+            log.error("could not get page", e);
+            return;
+        }
+
+        for (Element element : doc.select("p.quote, p.qt")) {
+            if (element.className().equals("quote")) {
+                quoteId = element.select("b").first().text();
+                quoteScore = element.ownText();
+            } else {
+                StringBuilder buffer = new StringBuilder();
+                ArrayList<String> quote = new ArrayList<String>();
+                String[] lines;
+
+                for (Node node : element.childNodes()) {
+                    if (node instanceof TextNode) {
+                        buffer.append(((TextNode) node).text().trim());
+                    } else if (node instanceof Element) {
+                        if (((Element) node).tagName().equals("br")) {
+                            buffer.append("\n");
+                        }
+                    }
+                }
+
+                lines = buffer.toString().split("\n");
+
+                if (lines.length == 1) {
+                    quote.add(String.format("%s %s: %s", quoteId, quoteScore, lines[0]));
+                } else {
+                    quote.add(String.format("%s %s:", quoteId, quoteScore));
+
+                    for (String line : lines) {
+                        quote.add(" " + line);
+                    }
+                }
+
+                try {
+                    this.quotes.put(quote.toArray(new String[0]));
+                } catch (InterruptedException e) {
+                    log.warn("interrupted while populating quotes");
+                    return;
+                }
+            }
+        }
+    }
+        </pre>
+      </div>
+      <div class="row">
+        <pre class="prettyprint">
+  protected String getCSSSource(String htmlSource) throws Exception {
+    org.jsoup.nodes.Document htmlDocument = Jsoup.parse(htmlSource);
+
+    Elements elements = htmlDocument.select("link[type=text/css]");
+
+    StringBuilder sb = new StringBuilder();
+
+    for (Element element : elements) {
+      String href = element.attr("href");
+
+      if (!href.contains(PropsValues.PORTAL_URL)) {
+        href = PropsValues.PORTAL_URL + href;
+      }
+
+      Connection connection = Jsoup.connect(href);
+
+      org.jsoup.nodes.Document document = connection.get();
+
+      sb.append(document.text());
+
+      sb.append("\n");
+    }
+
+    return sb.toString();
+  }
+        </pre>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      
+      <ol>
+        <li>org/jsoup/Connection/userAgent(java.lang.String)</li>
+        <li>org/jsoup/nodes/Document/children()</li>
+        <li>org/jsoup/nodes/Document/select(java.lang.String)</li>
+        <li>org/jsoup/nodes/Element/children()</li>
+        <li>org/jsoup/nodes/Element/select(java.lang.String)</li>
+        <li>org/jsoup/select/Elements/attr(java.lang.String)</li>
+        <li>org/jsoup/select/Elements/first()</li>
+        <li>org/jsoup/select/Elements/html()</li>
+        <li>org/jsoup/select/Elements/iterator()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/function (javax.script.Invocable,java.lang.String,java.lang.Object%5B%5D)</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getAttr()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getFun()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getName()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getTag()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Info/getColumns()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Info/getRootTag()</li>
+        <li>com/snicesoft/jsoupcrawler/core/ICrawler/getListener()</li>
+        <li>com/snicesoft/jsoupcrawler/core/ICrawler/getUrl (com.snicesoft.jsoupcrawler.config.entity.Info,int)</li>
+        <li>com/snicesoft/jsoupcrawler/core/ICrawler/userAgent()</li>
+        <li>com/snicesoft/jsoupcrawler/listener/DataAcceptListener/accept (com.snicesoft.jsoupcrawler.config.entity.Info,int,java.util.Map)</li>
+      </ol>
+    </div>
+  </div>
+  <hr class="style2">
+  <div class="row" id="query3">
+    <div class="col-sm-4">
+        <pre class="prettyprint">
+  public static void getScoresFromLivescore() throws IOException {
+    String url = "https://www.livescore.com/";
+    Document document = Jsoup.connect(url).get();
+    Elements scores = document.getElementsByClass("sco");
+    scores.parents();
+  }
+          </pre>
+    </div>
+    <div class="col-sm-4">
+      <div class="row">
+        <pre class="prettyprint">
+  public Document crawl(String method, String url) {
+    Document doc = null;
+    
+    if (url == null) {
+      logger.warn("url is null");
+      return doc;
+    }
+    
+    try {
+      Connection conn = Jsoup.connect(url);
+      for (String key : headers.keySet()) {
+        conn.header(key, headers.get(key));
+      }
+      conn.ignoreContentType(true);
+      conn.timeout(5 * 1000);
+      
+      if (HTTPConstants.Method.GET.equals(method)) {
+        doc = conn.get();
+      } else if (HTTPConstants.Method.POST.equals(method)) {
+        doc = conn.post();
+      }
+    } catch (Exception e) {
+      logger.warn(e.getMessage());
+    }
+    
+    return doc;
+  }
+        </pre>
+      </div>
+      <div class="row">
+        <pre class="prettyprint">
+  private void getConnection(Info info, int position, String funName) {
+    try {
+      Document document = Jsoup.connect(getUrl(info, position)).userAgent(userAgent()).get();
+      Elements elements = null;
+      if (info.getRootTag() != null && !"".equals(info.getRootTag())) {
+        elements = document.select(info.getRootTag()).first().children();
+      } else {
+        elements = document.children();
+      }
+      for (Element ele : elements) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        for (Column column : info.getColumns()) {
+          Object data = null;
+          if (column.getAttr() == null || "html".equals(column.getAttr()))
+            data = ele.select(column.getTag()).html();
+          else
+            data = ele.select(column.getTag()).attr(column.getAttr());
+          if (column.getFun() != null && !"".equals(column.getFun()))
+            data = column.function(invocable, funName, data);
+          map.put(column.getName(), data);
+        }
+        if (getListener() != null) {
+          getListener().accept(info, position, map);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+        </pre>
+      </div>
+      <div class="row">
+        <pre class="prettyprint">
+    /**
+     * Sets the URL.
+     * @param    String    the URL 
+     * @return             true if connection to URL is successful 
+     */
+    public boolean connect(String url) {      
+      
+      try {
+        this.url = url;
+        this.document = Jsoup.connect(url).get();
+        
+        Path path = Paths.get(url);
+        
+        File rootFile = new File(this.htmlDirectory.getAbsolutePath() + "/" + path.getName(path.getNameCount() - 1));
+        FileUtils.copyURLToFile(new URL(url), rootFile);
+        
+        return true;
+        
+      } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+      }
+    }
+        </pre>
+      </div>
+      <div class="row">
+        <pre class="prettyprint">
+    /*
+     * Bridge method used by donkey.js
+     */
+    public Document jsoup(String url) {
+        try {
+            filterHostBlocker();
+
+            URL u = new URL(url);
+            long li = lastInteraction.getOrDefault(u.getHost(), 0l);
+            long delta = System.currentTimeMillis() - li;
+            if (delta < 1000) {
+                Wait.randomMillis(1000, 2000);
+            }
+            lastInteraction.put(u.getHost(), System.currentTimeMillis());
+
+            return Jsoup.connect(url)
+                        .userAgent("Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)")
+                        .followRedirects(true)
+                        .get();
+        } catch (IOException e) {
+            Exceptions.handle(LOG, e);
+            return null;
+        }
+    }
+        </pre>
+      </div>
+      <div class="row">
+        <pre class="prettyprint">
+  /*
+   * (non-Javadoc)
+   * @see org.phoenix.api.action.APIAction#getResponseByJsoup(java.lang.String, java.lang.String, java.util.HashMap, java.util.HashMap, java.util.HashMap, boolean, java.lang.String)
+   */
+  @Override
+  public Response getResponseByJsoup(String url, String method,
+      HashMap<String, String> cookies, HashMap<String, String> datas,
+      HashMap<String, String> headers, boolean isFollowRedirects,
+      String userAgent) {
+    Connection conn = Jsoup.connect(url);
+    if(headers != null){
+      for(Entry<String,String> e:headers.entrySet()){
+        conn.header(e.getKey(), e.getValue());
+      }
+    }
+    if(datas != null) conn.data(datas);
+    if(cookies != null)conn.cookies(cookies);
+    if(userAgent != null)conn.userAgent(userAgent);
+    conn.followRedirects(isFollowRedirects);
+    if(method.equalsIgnoreCase("GET"))conn.method(Method.GET);
+    else if(method.equalsIgnoreCase("POST"))conn.method(Method.POST);
+    try {
+      return conn.execute();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+        </pre>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      
+      <ol>
+        <li>org/jsoup/Connection/userAgent(java.lang.String)</li>
+        <li>org/jsoup/nodes/Document/children()</li>
+        <li>org/jsoup/nodes/Document/select(java.lang.String)</li>
+        <li>org/jsoup/nodes/Element/children()</li>
+        <li>org/jsoup/nodes/Element/select(java.lang.String)</li>
+        <li>org/jsoup/select/Elements/attr(java.lang.String)</li>
+        <li>org/jsoup/select/Elements/first()</li>
+        <li>org/jsoup/select/Elements/html()</li>
+        <li>org/jsoup/select/Elements/iterator()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/function(javax.script.Invocable,java.lang.String,java.lang.Object%5B%5D)</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getAttr()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getFun()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getName()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getTag()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Info/getColumns()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Info/getRootTag()</li>
+        <li>com/snicesoft/jsoupcrawler/core/ICrawler/getListener()</li>
+        <li>com/snicesoft/jsoupcrawler/core/ICrawler/getUrl(com.snicesoft.jsoupcrawler.config.entity.Info,int)</li>
+        <li>com/snicesoft/jsoupcrawler/core/ICrawler/userAgent()</li>
+        <li>com/snicesoft/jsoupcrawler/listener/DataAcceptListener/accept(com.snicesoft.jsoupcrawler.config.entity.Info,int,java.util.Map)</li>
+
+      </ol>
+    </div>
+  </div>
+  <hr class="style2">
+
+</div>
+
+
+
+
+</body>
+</html>
