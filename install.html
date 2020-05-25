@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Focus - How to install FOCUS the Ecliuspe plugin</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <style>
+    hr.style2 {
+      border-top: 3px double #8c8b8b;
+    }
+    ol.afc li{
+      font-family: courier, courier new, serif;
+      font-size: 10px
+    }
+  </style>
+</head>
+<body>
+
+  <div class="jumbotron text-center">
+    <h1>Focus - FunctiOn Calls and USage patterns</h1>
+    <p>How to install FOCUS the Ecliuspe plugin</p> 
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+       <div class="col-sm-12">
+        <h3>Setup installation</h3>
+        To install the Eclipse IDE, please follow these instructions:
+        <ul>
+          <li>Download and install Eclipse (https://www.eclipse.org/downloads/ and choose
+the JEE distribution)</li>
+          <li>Be sure to have JRE and JDK software on your machine</li>
+        </ul>
+       </div>
+
+    </div>
+    <div class=row>
+      <div class="col-sm-12">
+      <h3>Focus plugin installation</h3>
+        To install the FOCUS plugin, please follow these instructions:
+        <ol>
+          <li>Go to Help->Install new software</li>
+          <li>Choose Add and put this site in Location:
+          <a href="http://ci5.castalia.camp:8080/job/scava-ide/job/dev/lastSuccessfulBuild/artifact/eclipse-based-ide/org.eclipse.scava.root/releng/org.eclipse.scava.update/target/repository/">Update site</a></li>
+          <li>Important: Be sure to avoid the usage of University connection for all these operations</li>
+          <li>Check CROSSMINER Eclipse-based IDE and choose Next->Install</li>
+          <li>Restart Eclipse</li>
+          <li>Go to Window->Preferences->CROSSMINER->Remote settings and choose the</li>
+          following configuration:
+            a. KnowledgeBase server address->http://178.238.238.209
+            b. KnowledgeBase server port -> 8099
+            c. WebDashboard base path -> https://crossminer.biterg.io
+        </ol>
+      </div>
+    </div>
+  </div>
+</body>
