@@ -42,17 +42,31 @@ the JEE distribution)</li>
       <h3>Focus plugin installation</h3>
         To install the FOCUS plugin, please follow these instructions:
         <ol>
-          <li>Go to Help->Install new software</li>
+          <li>Go to Help->Install new software<br/><img src="fig/install-1.png" width="30%" /></li></li></li>
           <li>Choose Add and put this site in Location:
-          <a href="http://ci5.castalia.camp:8080/job/scava-ide/job/dev/lastSuccessfulBuild/artifact/eclipse-based-ide/org.eclipse.scava.root/releng/org.eclipse.scava.update/target/repository/">Update site</a></li>
-          <li>Important: Be sure to avoid the usage of University connection for all these operations</li>
+            <a href="http://ci5.castalia.camp:8080/job/scava-ide/job/dev/lastSuccessfulBuild/artifact/eclipse-based-ide/org.eclipse.scava.root/releng/org.eclipse.scava.update/target/repository/">Update site</a><br/>
+            <img src="fig/install-2.png" width="50%" /></li></li>
+          </li>
+          <!--<li>Important: Be sure to avoid the usage of University connection for all these operations</li>-->
           <li>Check CROSSMINER Eclipse-based IDE and choose Next->Install</li>
           <li>Restart Eclipse</li>
-          <li>Go to Window->Preferences->CROSSMINER->Remote settings and choose the</li>
+          <li>Go to Window->Preferences->CROSSMINER->Remote settings and choose the
           following configuration:
-            a. KnowledgeBase server address->http://178.238.238.209
-            b. KnowledgeBase server port -> 8099
-            c. WebDashboard base path -> https://crossminer.biterg.io
+            <ol type="a">
+              <li>KnowledgeBase server address->http://178.238.238.209</li>
+              <li>KnowledgeBase server port -> 8099</li>
+              <li>WebDashboard base path -> https://crossminer.biterg.io<br/>
+                <img src="fig/config-1.png" width="50%" />
+              </li>
+              <li>set the FOCUS timeouts to 900000<br/>
+                <img src="fig/config-2.png" width="50%" />
+              </li>
+            </ol>
+
+            <li>After you select the code, you can do Right click->CROSSMINER->Request FOCUS Code Snippet recommendation and you got something like that:
+              <br/>
+                <img src="fig/use.png" width="50%" />
+            </li>
         </ol>
       </div>
     </div>
