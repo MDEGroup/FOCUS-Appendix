@@ -1,0 +1,441 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<link rel="shortcut icon" href="/images/favicon.png">
+<link rel="icon" href="/images/favicon.png">
+<title>ASUS DSL-N14U Wireless-N300 ADSL2/2+ Modem Router</title>
+<link rel="stylesheet" type="text/css" href="/index_style.css">
+<link rel="stylesheet" type="text/css" href="/form_style.css">
+<link rel="stylesheet" type="text/css" href="/other.css">
+
+<script type="text/JavaScript" src="/jquery.js"></script>
+<script type="text/javascript">
+var detect_dhcp_pppoe = "";
+var current_lanip = '192.168.1.1';
+var current_mask = '255.255.255.0';
+var new_lan_ip = '';
+var reboot_time = 5;
+var wanstate = -1;
+var wansbstate = -1;
+var wanauxstate = -1;
+//var _wlc_ssid = decodeURIComponent('');
+
+// get the wan state at the first time.
+wanstate = 2;
+wansbstate = 0;
+wanauxstate = 2;
+
+
+var done_setting_lan = 0;
+
+var winH, winW;
+var progress, y;
+
+var casenum = '1';
+
+function initial(){
+	var html_code = '';
+
+	hideLinkTag();
+
+	if(casenum == 1){
+		showtext($("#failReason1")[0], "Il cavo telefonico o il cavo Ethernet non è collegato.");
+
+		$("#case1").show();
+	}
+	else if(casenum == 2){
+		if(wansbstate == 2 || wanauxstate == 3){
+			showtext($("#failReason1")[0], "Autenticazione PPPoE, PPPoA o VPN non riuscita.");
+
+			$("#ppp_input_error").show();
+		}
+		else{
+			showtext($("#failReason1")[0], "Nessuna risposta dal server remoto.");
+
+			$("#ppp_no_response").show();
+		}
+
+		$("#case2").show();
+	}
+	else if(casenum == 3){
+		/*if(detect_dhcp_pppoe=="dhcp"){
+			showtext($("#failReason1")[0], "Il server DHCP dell’ISP non funziona in modo appropriato.");
+
+			$("#case3").show();
+		}
+		else{
+			showtext($("#failReason1")[0], "È stato rilevato che il tipo di connessione WAN è PPPoE. Tuttavia l’impostazione PPPoE non è completa.");
+		}*/
+		showtext($("#failReason1")[0], "Impossibile stabilire la connessione ad Internet. Verificare con l’ISP i dati dell’account, oppure contattare la hotline dell’assistenza ASUS per informazioni tecniche e supporto.");
+	}
+	else if(casenum == 4){
+		showtext($("#failReason1")[0], "Connessione ad Internet fallita. L'indirizzo IP del router è uguale all'indirizzo IP del gateway.");
+
+		$("#case4").show();
+	}
+	else if(casenum == 5){
+		if(wanstate == 5)
+			showtext($("#failReason1")[0], "Probabilmente la connessione WAN è stata interrotta manualmente.");
+		else
+			showtext($("#failReason1")[0], "Le impostazioni dinamiche, o statiche, dell'indirizzo IP non sono corrette.");
+
+		html_code += '<ul>\n';
+		if(wanstate == 5)
+			html_code += '<li>Creare manualmente la connessione WAN.</li>\n';
+		else
+			html_code += '<li>Verificate che le impostazioni di indirizzo IP e server DNS siano corrette.</li>\n';
+		html_code += '</ul>\n';
+
+		if(wanstate == 5){
+			html_code += '<ul>\n';
+			html_code += '<li><a href="javascript:manually_start_wan_Link();" style="color:#569AC7; text-decoration:underline;">Attivare la WAN.</a></li>\n';
+			html_code += '</ul>\n';
+		}
+
+		$("#case5")[0].innerHTML = html_code;
+		$("#case5").show();
+	}
+	else if(casenum == 6){
+		new_lan_ip = get_new_lanip();
+
+		showtext($("#failReason1")[0], "Rilevato conflitto IP. Fare clic su Next (Avanti) per ottenere un nuovo indirizzo IP.");
+
+		showtext($("#suggestion_title")[0], "Si raccomanda di:");
+
+		html_code += "<ul>\n";
+		html_code += "<li>Cliccate su (Avanti) per ordinare al router di ottenere un nuovo indirizzo IP automaticamente. Il nuovo indirizzo IP è:<br>";
+		html_code += "<B>"+new_lan_ip+"</B></li>\n";
+		html_code += "<li>Assicuratevi di configurare ogni servizio, come il Port Forwarding o il DMZ, in base al nuovo indirizzo IP.</li>\n";
+		html_code += "</ul>\n";
+		html_code += "<br>\n";
+		html_code += "<div style=\"text-align: right;\">\n";
+		html_code += "<input type=\"button\" class=\"button_gen\" width=\"72\" onclick=\"change_lan_subnet();\" value=\"Avanti\">\n";
+		html_code += "</div>\n";
+
+		$("#case6")[0].innerHTML = html_code;
+		$("#case6").show();
+		$("#suggestion").hide();
+	}
+	else if(casenum == 8){
+		new_lan_ip = get_new_lanip();
+		showtext($("#failReason1")[0], "L’AP potrebbe essere spento. Controllare di nuovo.");
+		showtext($("#suggestion_title")[0], "Si raccomanda di:");
+		html_code += "<ul>\n";
+		html_code += "<li>Cambia la rete a cui si collegherà DSL-N14U.";
+		html_code += "<span style=\"text-align: right;\">\n";
+		html_code += "<input type=\"button\" class=\"button_gen\" width=\"72\" onclick=\"javascript:location.href=\'http://router.asus.com/cgi-bin/QIS_wizard.asp?flag=sitesurvey\';\" value=\"Riesegui scansione\">";
+		html_code += "</span>\n";
+		html_code += "</li>\n";
+
+		html_code += "<li>Configurazione manuale e messa a punto.";
+		html_code += "<span style=\"text-align: right;\">\n";
+		html_code += "<input type=\"button\" class=\"button_gen\" width=\"72\" onclick=\"javascript:location.href=\'/cgi-bin/QIS_wizard.asp?flag=manual\';\" value=\"Impostazione manuale\">";
+		html_code += "</span>\n";
+		html_code += "</li>\n";
+		html_code += "</ul>\n";
+		$("#case8")[0].innerHTML = html_code;
+		$("#case8").show();
+		$("#suggestion").hide();
+	}
+	else{
+		parent.location = "/cgi-bin/index2.asp";
+	}
+}
+
+function showtext(obj, str){
+	if(obj)
+		obj.innerHTML = str;
+}
+
+function hideLinkTag(){
+	if(document.all){
+		var tagObjs = document.all.tags("a");
+
+		for(var i = 0; i < tagObjs.length; ++i)
+			tagObjs(i).outerHTML = tagObjs(i).outerHTML.replace(">"," hidefocus=true>");
+	}
+}
+
+function wanLink(){
+	location.href = "/cgi-bin/Advanced_DSL_Content.asp";
+}
+
+function detectLink(){
+	location.href = "/cgi-bin/QIS_wizard.asp?flag=detect";
+}
+
+function manually_start_wan_Link(){
+	location.href = "/cgi-bin/index2.asp?flag=Internet";
+}
+
+function change_lan_subnet(){
+	showLoadingBar(reboot_time);
+
+	send_setting();
+
+	setTimeout("check_system_ready();", reboot_time*1000);
+}
+
+function check_system_ready(){
+	if(wanstate != 2){
+		$("#proceeding_action")[0].innerHTML = "È in corso il rinnovamento dell’indirizzo IP. Se questa procedura richiede più di due minuti, attenersi alle istruzioni che seguono per rinnovare manualmente l’indirizzo IP: (1) scollegare il cavo di rete; (2) attendere una decina di secondi; (3) ricollegare il cavo per ottenere un nuovo indirizzo IP.";
+		detect_router();
+		setTimeout("check_system_ready();", 3000);
+	}
+	else{
+		$("#proceeding_img")[0].style.width = "100%";
+		$("#proceeding_img_text")[0].innerHTML = "Completato!";
+		$("#proceeding_action")[0].innerHTML = "Impostazioni IP aggiornate correttamente. Si sarà reindirizzati all’interfaccia web di DSL-N14U.";
+
+		setTimeout("parent.location = \"http://"+new_lan_ip+"/cgi-bin/QIS_wizard.asp?flag=detect\"", 2*1000);
+	}
+}
+
+function send_setting(){
+	$.ajax({
+		url: '/cgi-bin/setting_lan.asp',
+		dataType: 'script',
+
+		error: function(xhr){
+			setTimeout("send_setting();", 1000);
+		},
+		success: function(response){
+			;
+		}
+	});
+}
+
+function detect_router(){
+	$.ajax({
+		url: 'http://'+new_lan_ip+'/cgi-bin/WAN_info.asp',
+		dataType: 'script',
+
+		error: function(xhr){
+			setTimeout("detect_router();", 1000);
+		},
+		success: function(response){
+			setTimeout("detect_router();", 1000);
+		}
+	});
+}
+
+function get_new_lanip(){
+	var reverse_mask_num = ~(inet_aton(current_mask));
+	var current_lanip_num = inet_aton(current_lanip);
+	var new_lanip_num = current_lanip_num+reverse_mask_num+1;
+
+	return inet_ntoa(new_lanip_num);
+}
+
+function inet_aton(ip_str){
+	if(!ip_str)
+		return -1;
+
+	var re = /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/;
+	if(re.test(ip_str)){
+		var v1 = parseInt(RegExp.$1);
+		var v2 = parseInt(RegExp.$2);
+		var v3 = parseInt(RegExp.$3);
+		var v4 = parseInt(RegExp.$4);
+
+		if(v1 < 256 && v2 < 256 && v3 < 256 && v4 < 256)
+			return v1*256*256*256+v2*256*256+v3*256+v4;
+	}
+
+	return -2;
+}
+
+function inet_ntoa(ip_num){
+	var v1, v2, v3, v4;
+	var ip_str = "";
+
+	if(!ip_num || typeof(ip_num) != "number")
+		return null;
+
+	v1 = (ip_num&0xff000000)>>>24;
+	v2 = (ip_num&0x00ff0000)>>>16;
+	v3 = (ip_num&0x0000ff00)>>>8;
+	v4 = (ip_num&0x000000ff);
+
+	ip_str = v1+"."+v2+"."+v3+"."+v4;
+
+	return ip_str;
+}
+
+function winW_H(){
+	if(parseInt(navigator.appVersion) > 3){
+		winW = document.documentElement.scrollWidth;
+		if(document.documentElement.clientHeight > document.documentElement.scrollHeight)
+			winH = document.documentElement.clientHeight;
+		else
+			winH = document.documentElement.scrollHeight;
+	}
+}
+
+function showLoadingBar(seconds){
+	htmlbodyforIE = document.getElementsByTagName("html");  //this both for IE&FF, use "html" but not "body" because <!DOCTYPE html PUBLIC.......>
+	htmlbodyforIE[0].style.overflow = "hidden";	  //hidden the Y-scrollbar for preventing from user scroll it.
+
+	winW_H();
+	var blockmarginTop;
+	blockmarginTop = document.documentElement.scrollTop + 200;
+	$("#loadingBarBlock")[0].style.marginTop = blockmarginTop+"px";
+	$("#LoadingBar")[0].style.width = winW+"px";
+	$("#LoadingBar")[0].style.height = winH+"px";
+
+	if(!seconds)
+		seconds = 0;
+	else
+		progress = 100/seconds;
+
+	y = 0;
+	LoadingProgress(seconds);
+}
+
+function LoadingProgress(seconds){
+	$("#LoadingBar")[0].style.visibility = "visible";
+
+	y = y+progress;
+	if(typeof(seconds) == "number" && seconds >= 0){
+		if(seconds != 0){
+			if(Math.round(y) == 100){
+				$("#proceeding_img")[0].style.width = "99%";
+				$("#proceeding_img_text")[0].innerHTML = "99%";
+			}
+			else{
+				$("#proceeding_img")[0].style.width = Math.round(y) + "%";
+				$("#proceeding_img_text")[0].innerHTML = Math.round(y) + "%";
+			}
+			--seconds;
+			setTimeout("LoadingProgress("+seconds+");", 1000);
+		}
+		else{
+			$("#proceeding_img")[0].style.width = "99%";
+			$("#proceeding_img_text")[0].innerHTML = "99%";
+			y = 0;
+		}
+	}
+}
+
+function hideLoadingBar(){
+	$("#LoadingBar")[0].style.visibility = "hidden";
+}
+</script>
+</head>
+
+<body onload="initial();">
+<div id="LoadingBar" class="popup_bar_bg">
+<table cellpadding="5" cellspacing="0" id="loadingBarBlock" class="loadingBarBlock" align="center">
+	<tr>
+		<td height="80">
+		<div class="Bar_container">
+			<span id="proceeding_img_text" ></span>
+			<div id="proceeding_img"></div>
+		</div>
+		<div id="proceeding_action" style="margin:5px auto; width:85%;">Changing the local subnet...</div>
+		</td>
+	</tr>
+</table>
+<!--[if lte IE 6.5]><iframe class="hackiframe"></iframe><![endif]-->
+</div>
+
+<br><br>
+<table width="500" border="0" align="center" cellspacing="0" class="erTable">
+<thead>
+  <tr>
+    <td height="52" align="left" valign="top"><span class="modelName">DSL-N14U</span></td>
+  </tr>
+</thead>
+  <tr>
+    <th valign="top" height="60px" background="images/er_bg.gif"><div class="er_title">L’accesso alla pagina web che si vuole visualizzare non è riuscito.</div></th>
+  </tr>
+
+
+  <tr>
+    <td  valign="top" class="erpage_td">
+  	  <div class="alertImg"><img src="/images/alertImg.png"></div>
+  	  <span class="Epagetitle">Motivo della connessione non riuscita :</span>
+
+	  <div id="failReason" class="Epagecontent" style="color:red">
+	    <ul>
+		  <li>
+		    <span id="failReason1"></span>
+		  </li>
+	    </ul>
+	  </div>
+
+		<div class="Epagetitle">
+			<span>Si raccomanda di: (Sono necessari account e password amministratore.)</span>
+		</div>
+	<!--span id="suggestion_title" class="Epagetitle">Si raccomanda di: (Sono necessari account e password amministratore.)</span-->
+	<div class="Epagecontent">
+		<div id="case1" style="display:none;">
+		  <ul>
+			 <li>Assicuratevi che il cavo tra le porte WAN di modem e router sia collegato correttamente.</li>
+		  </ul>
+		</div>
+
+		<div id="case2" style="display:none;">
+		  <ul>
+			 <li>
+			 	<div id="ppp_input_error" style="display:none;">
+			 	  <a href="javascript:wanLink();" style="color:#569AC7; text-decoration:underline;">Va alla pagina Impostazione account</a>
+			 	  <span> e controllare di nuovo account e password.</span>
+			 	</div>
+
+			 	<div id="ppp_no_response" style="display:none;">
+			 	  <a href="javascript:detectLink();" style="color:#569AC7; text-decoration:underline;">Andare alla pagina di rilevamento tipo WAN</a>
+			 	  <span> e DSL-N14U rileverà automaticamente il tipo di WAN.</span>
+			 	</div>
+			 </li>
+		  </ul>
+		</div>
+
+		<div id="case3" style="display:none;">
+		  <ul>
+			 <li>Contattare l’ISP (Internet Service Provider) per scoprire la causa principale del guasto DHCP.</li>
+		  </ul>
+		</div>
+
+		<div id="case4" style="display:none;">
+		  <ul>
+			 <li>Configurate nuovamente l'indirizzo IP del router assicurandovi che sia diverso dall'indirizzo IP del gateway.</li>
+		  </ul>
+		</div>
+
+		<div id="case5" style="display:none;"></div>
+
+		<div id="case6" style="display:none;">
+			<ul>
+				<li>Riconfigurare l’indirizzo IP locale di DSL-N14U, ed assicurarsi che sia diverso dall’indirizzo IP del gateway WAN. Esempio: 192.168.X.X; dove X è un numero compreso tra 2 e 254.</li>
+			</ul>
+		</div>
+
+		<div id="case8" style="display:none;">
+			<ul>
+				<li>L’AP potrebbe essere spento. Controllare di nuovo.</li>
+			</ul>
+		</div>
+
+		<div id="suggestion" style="display:;">
+		<ul>
+		  <li>
+		  	<span id="suggestion_final">Se il problema persiste cambiate manualmente le impostazioni di connessione.</span>
+		  	<a href="javascript:wanLink();" style="color:#569AC7; text-decoration:underline;">Cliccate qui per andare alla pagina delle impostazioni.</a>
+		   	<span>Si può controllare la configurazione e l'impostazione.</span>
+		  </li>
+		</ul>
+		</div>
+	  </div>
+	</td>
+  </tr>
+
+  <tr>
+    <td height="22" class="erpage_footer"><span></span></td>
+  </tr>
+</table>
+</body>
+</html>
