@@ -23,7 +23,9 @@
 <div class="jumbotron text-center">
   <h1>FOCUS - Mining FunctiOn Calls and USage patterns</h1>
   <p>This page is the online appendix for the paper entitled: "Recommending API Function Calls and Code Snippets to Support Software Development" submitted to the IEEE Transactions on Software Engineering. We introduce additional code examples recommended by FOCUS</p> 
-</div> 
+</div>
+  
+  
   <div class="row">
     <div class="col-sm-12" align="center">
       <h1>Apache-cli recommendations</h1>
@@ -41,10 +43,25 @@
     </div>
   </div>
   <hr class="style2">
-  
+  <div class="row">
+    <div class="col-sm-12 text-center">
+      <h4>getOptions</h4>
+    </div>
+  </div>
   <div class="row" id="query5">
     <div class="col-sm-4">
         <pre class="prettyprint">
+    /**
+   * Create apache-cli options for the following elements:
+   *  url (Mandatory),
+   *  username (Mandatory): -user <user>
+   *  password (Mandatory): -pass <password>
+   *  query (Mandatory): -sql <query>
+   *  CSV file path: -f -file <filepath>
+   *  includeHeaders: -headers
+   *  All the options contains and argument, with the exception of includeHeaders   
+   * @return Available command line options
+   */
   public static Options getOptions() {
     final Options options = new Options();
     
@@ -55,7 +72,8 @@
     urlGroup.setRequired(true);
     urlGroup.addOption(urlOption);
     options.addOptionGroup(urlGroup);
-    
+    //COMPLETE THE METHOD
+
 
     return options;
   }
@@ -441,24 +459,216 @@
         <li>net/aparsons/sqldump/Launcher2/businessLogic(java.lang.String,java.lang.String)</li>
       </ol>
     </div>
+  </div> 
+  <hr class="style2">
+  <div class="row">
+    <div class="col-sm-12 text-center">
+      <h4>printUsage</h4>
+    </div>
+  </div>
+      <div class="row" id="query8">
+    <div class="col-sm-4">
+        <pre class="prettyprint">
+  /**
+  * Print the command line options to the console and return print usage as string
+  */
+  public static String printUsage() {
+    HelpFormatter printer = new HelpFormatter();
+    //COMPLETE THE METHOD
+  }
+          </pre>
+    </div>
+    <div class="col-sm-4">
+      <br/><button data-toggle="collapse" data-target="#q8_1">Result 1</button>
+      <div class="row collapse" id="q8_1">
+        <pre class="prettyprint">
+    protected boolean parseCommandline(final String[] args)
+    {
+        try
+        {
+            _commandLine = new PosixParser().parse(OPTIONS, args);
+
+            return true;
+        }
+        catch (ParseException e)
+        {
+            System.err.println("Error: " + e.getMessage());
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("Qpid", OPTIONS, true);
+
+            return false;
+        }
+    }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q8_2">Result 2</button>
+      <div class="row collapse" id="q8_2">
+        <pre class="prettyprint">
+  public static void main(String[] args) throws Exception {
+    CommandLine cmd = new GnuParser().parse(opts, args);
+    if (cmd.hasOption("help")) {
+      new HelpFormatter().printHelp("Usage: hbgen [OPTIONS]", opts);
+      return;
+    }
+    // defaults
+    Class<?> specClass = HamletSpec.class;
+    Class<?> implClass = HamletImpl.class;
+    String outputClass = "HamletTmp";
+    String outputPackage = implClass.getPackage().getName();
+    if (cmd.hasOption("spec-class")) {
+      specClass = Class.forName(cmd.getOptionValue("spec-class"));
+    }
+    if (cmd.hasOption("impl-class")) {
+      implClass = Class.forName(cmd.getOptionValue("impl-class"));
+    }
+    if (cmd.hasOption("output-class")) {
+      outputClass = cmd.getOptionValue("output-class");
+    }
+    if (cmd.hasOption("output-package")) {
+      outputPackage = cmd.getOptionValue("output-package");
+    }
+    new HamletGen().generate(specClass, implClass, outputClass, outputPackage);
+  }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q8_3">Result 3</button>
+      <div class="row collapse" id="q8_3">
+        <pre class="prettyprint">
+  public static void main(String[] args) throws Exception {
+    Options options = new Options();
+    options.addOption(ARG_COLLECTION, true, "File name of the POSTMAN collection.");
+    options.addOption(ARG_ENVIRONMENT, true, "File name of the POSTMAN environment variables.");
+    options.addOption(ARG_FOLDER, true,
+        "(Optional) POSTMAN collection folder (group) to execute i.e. \"My Use Cases\"");
+    options.addOption(ARG_HALTONERROR, false, "(Optional) Stop on first error in POSTMAN folder.");
+
+    CommandLineParser parser = new BasicParser();
+    CommandLine cmd = parser.parse(options, args);
+    String colFilename = cmd.getOptionValue(ARG_COLLECTION);
+    String envFilename = cmd.getOptionValue(ARG_ENVIRONMENT);
+    String folderName = cmd.getOptionValue(ARG_FOLDER);
+    boolean haltOnError = cmd.hasOption(ARG_HALTONERROR);
+
+    if (colFilename == null || colFilename.isEmpty() || envFilename == null || envFilename.isEmpty()) {
+      // automatically generate the help statement
+      HelpFormatter formatter = new HelpFormatter();
+      formatter.printHelp("postman-runner", options);
+      return;
+    }
+
+    PostmanCollectionRunner pcr = new PostmanCollectionRunner();
+    pcr.runCollection(colFilename, envFilename, folderName, haltOnError, false);
+  }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q8_4">Result 4</button>
+      <div class="row collapse" id="q8_4">
+        <pre class="prettyprint">
+  private static void showHelp()
+  {
+    final HelpFormatter formatter = new HelpFormatter();
+    final PrintWriter pw = new PrintWriter(System.err);
+    final String version = JSCMain.getVersion();
+
+    pw.println("jsc: [options] --check        file");
+    pw.println("  or [options] --xhtml-single file outdir");
+    pw.println("  or [options] --xhtml-multi  file outdir");
+    pw.println("  or [options] --version");
+    pw.println();
+    formatter.printOptions(pw, 120, JSCMain.OPTIONS, 2, 4);
+    pw.println();
+    pw.println("  Version: " + version);
+    pw.println();
+    pw.flush();
+  }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q8_5">Result 5</button>
+      <div class="row collapse" id="q8_5">
+        <pre class="prettyprint">
+  private void doExport(List<String> commandArgs)
+  {
+    Options options = new OptionBuilder()
+      .createOptions();
+
+    try
+    {
+
+      CommandLineParser parser = new PosixParser();
+      CommandLine cmdLine = parser.parse(options, commandArgs.toArray(
+        new String[commandArgs.size()]));
+
+      if (cmdLine.getArgs().length < 2)
+      {
+        throw new ParseException(
+          "Needs two arguments: corpus name and output folder");
+      }
+      annisDao.exportCorpus(cmdLine.getArgs()[0], new File(cmdLine.getArgs()[1]));
+      
+    }
+    catch (ParseException ex)
+    {
+      HelpFormatter helpFormatter = new HelpFormatter();
+      helpFormatter.printHelp("annis-admin.sh export CORPUS DIR ...",
+        options);
+    }
+  }
+        </pre>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <br/><button data-toggle="collapse" data-target="#afc8">API function calls</button>
+      
+      <ol class="afc collapse" id="afc8">
+          <li>org/apache/commons/cli/CommandLine/getOptionValue(java.lang.String)</li>
+          <li>org/apache/commons/cli/CommandLine/getOptions()</li>
+          <li>org/apache/commons/cli/CommandLine/hasOption(java.lang.String)</li>
+          <li>org/apache/commons/cli/CommandLineParser/parse(org.apache.commons.cli.Options,java.lang.String[])</li>
+          <li>org/apache/commons/cli/GnuParser/GnuParser()</li>
+          <li>org/apache/commons/cli/HelpFormatter/printHelp(java.lang.String,org.apache.commons.cli.Options)</li>
+          <li>org/apache/commons/cli/ParseException/getMessage()</li>
+          <li>au/com/bytecode/opencsv/CSVWriter/CSVWriter(java.io.Writer)</li>
+          <li>au/com/bytecode/opencsv/CSVWriter/close()</li>
+          <li>au/com/bytecode/opencsv/CSVWriter/writeAll(java.sql.ResultSet,boolean)</li>
+          <li>com/amazonaws/services/s3/AmazonS3/putObject(com.amazonaws.services.s3.model.PutObjectRequest)</li>
+          <li>com/amazonaws/services/s3/model/ObjectMetadata/ObjectMetadata()</li>
+          <li>com/amazonaws/services/s3/model/ObjectMetadata/setServerSideEncryption(java.lang.String)</li>
+          <li>com/amazonaws/services/s3/model/PutObjectRequest/PutObjectRequest(java.lang.String,java.lang.String,java.io.File)</li>
+          <li>com/amazonaws/services/s3/model/PutObjectRequest/setMetadata(com.amazonaws.services.s3.model.ObjectMetadata)</li>
+          <li>com/google/common/collect/Lists/newArrayList()</li>
+          <li>net/aparsons/sqldump/Launcher/businessLogic(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,boolean)</li>
+          <li>net/aparsons/sqldump/Launcher/getOptions()</li>
+          <li>net/aparsons/sqldump/Launcher/printUsage()</li>
+          <li>net/aparsons/sqldump/Launcher2/businessLogic(java.lang.String,java.lang.String)</li>
+      </ol>
+    </div>
   </div>
   <hr class="style2">
+    <div class="row">
+    <div class="col-sm-12 text-center">
+      <h4>parse</h4>
+    </div>
+  </div>
     <div class="row" id="query6">
     <div class="col-sm-4">
         <pre class="prettyprint">
-    public static void main(String[] args) {
+    /**
+   * Parse the command line parameters and put to a hash map where the parameter name is the key 
+   * and the argument is the value.
+   * The hash map must contain all the required paramenter. 
+   * If a mandory one is missed, it prints the parameter usage and throws an exception. 
+   * Use the parameter names defined in getOption method.
+   */
+    public static Map<String, String> parse(String[] consoleParams) throws ParseException {
+    Map<String, String> result = new HashMap<String, String>();
     try {
       CommandLineParser parser = new GnuParser();
-      CommandLine cmdLine = parser.parse(getOptions(), args);
+      CommandLine cmdLine = parser.parse(getOptions(), consoleParams);
       if(!cmdLine.hasOption("url")) throw new ParseException("No url is specifified");
       String url = cmdLine.getOptionValue("url");
+      //COMPLETE THE METHOD
+
       
-      String username = "", password = "", sql = "", file = "", protocol = "";
-      //Complete the parameter parser code 
-      //HERE
-      //
-      
-      boolean includeHeaders = false;
       businessLogic(protocol, url, username, password, sql, file, includeHeaders);
     } catch (ParseException pe) {
       printUsage();
@@ -737,185 +947,7 @@
       </ol>
     </div>
   </div>
-  <hr class="style2">
   
-  <hr class="style2">
-      <div class="row" id="query8">
-    <div class="col-sm-4">
-        <pre class="prettyprint">
-  public static void printUsage() {
-    HelpFormatter printer = new HelpFormatter();
-    //Complete the helper code 
-    //HERE
-    //
-  }
-          </pre>
-    </div>
-    <div class="col-sm-4">
-      <br/><button data-toggle="collapse" data-target="#q8_1">Result 1</button>
-      <div class="row collapse" id="q8_1">
-        <pre class="prettyprint">
-    protected boolean parseCommandline(final String[] args)
-    {
-        try
-        {
-            _commandLine = new PosixParser().parse(OPTIONS, args);
-
-            return true;
-        }
-        catch (ParseException e)
-        {
-            System.err.println("Error: " + e.getMessage());
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("Qpid", OPTIONS, true);
-
-            return false;
-        }
-    }
-        </pre>
-      </div>
-      <br/><button data-toggle="collapse" data-target="#q8_2">Result 2</button>
-      <div class="row collapse" id="q8_2">
-        <pre class="prettyprint">
-  public static void main(String[] args) throws Exception {
-    CommandLine cmd = new GnuParser().parse(opts, args);
-    if (cmd.hasOption("help")) {
-      new HelpFormatter().printHelp("Usage: hbgen [OPTIONS]", opts);
-      return;
-    }
-    // defaults
-    Class<?> specClass = HamletSpec.class;
-    Class<?> implClass = HamletImpl.class;
-    String outputClass = "HamletTmp";
-    String outputPackage = implClass.getPackage().getName();
-    if (cmd.hasOption("spec-class")) {
-      specClass = Class.forName(cmd.getOptionValue("spec-class"));
-    }
-    if (cmd.hasOption("impl-class")) {
-      implClass = Class.forName(cmd.getOptionValue("impl-class"));
-    }
-    if (cmd.hasOption("output-class")) {
-      outputClass = cmd.getOptionValue("output-class");
-    }
-    if (cmd.hasOption("output-package")) {
-      outputPackage = cmd.getOptionValue("output-package");
-    }
-    new HamletGen().generate(specClass, implClass, outputClass, outputPackage);
-  }
-        </pre>
-      </div>
-      <br/><button data-toggle="collapse" data-target="#q8_3">Result 3</button>
-      <div class="row collapse" id="q8_3">
-        <pre class="prettyprint">
-  public static void main(String[] args) throws Exception {
-    Options options = new Options();
-    options.addOption(ARG_COLLECTION, true, "File name of the POSTMAN collection.");
-    options.addOption(ARG_ENVIRONMENT, true, "File name of the POSTMAN environment variables.");
-    options.addOption(ARG_FOLDER, true,
-        "(Optional) POSTMAN collection folder (group) to execute i.e. \"My Use Cases\"");
-    options.addOption(ARG_HALTONERROR, false, "(Optional) Stop on first error in POSTMAN folder.");
-
-    CommandLineParser parser = new BasicParser();
-    CommandLine cmd = parser.parse(options, args);
-    String colFilename = cmd.getOptionValue(ARG_COLLECTION);
-    String envFilename = cmd.getOptionValue(ARG_ENVIRONMENT);
-    String folderName = cmd.getOptionValue(ARG_FOLDER);
-    boolean haltOnError = cmd.hasOption(ARG_HALTONERROR);
-
-    if (colFilename == null || colFilename.isEmpty() || envFilename == null || envFilename.isEmpty()) {
-      // automatically generate the help statement
-      HelpFormatter formatter = new HelpFormatter();
-      formatter.printHelp("postman-runner", options);
-      return;
-    }
-
-    PostmanCollectionRunner pcr = new PostmanCollectionRunner();
-    pcr.runCollection(colFilename, envFilename, folderName, haltOnError, false);
-  }
-        </pre>
-      </div>
-      <br/><button data-toggle="collapse" data-target="#q8_4">Result 4</button>
-      <div class="row collapse" id="q8_4">
-        <pre class="prettyprint">
-  private static void showHelp()
-  {
-    final HelpFormatter formatter = new HelpFormatter();
-    final PrintWriter pw = new PrintWriter(System.err);
-    final String version = JSCMain.getVersion();
-
-    pw.println("jsc: [options] --check        file");
-    pw.println("  or [options] --xhtml-single file outdir");
-    pw.println("  or [options] --xhtml-multi  file outdir");
-    pw.println("  or [options] --version");
-    pw.println();
-    formatter.printOptions(pw, 120, JSCMain.OPTIONS, 2, 4);
-    pw.println();
-    pw.println("  Version: " + version);
-    pw.println();
-    pw.flush();
-  }
-        </pre>
-      </div>
-      <br/><button data-toggle="collapse" data-target="#q8_5">Result 5</button>
-      <div class="row collapse" id="q8_5">
-        <pre class="prettyprint">
-  private void doExport(List<String> commandArgs)
-  {
-    Options options = new OptionBuilder()
-      .createOptions();
-
-    try
-    {
-
-      CommandLineParser parser = new PosixParser();
-      CommandLine cmdLine = parser.parse(options, commandArgs.toArray(
-        new String[commandArgs.size()]));
-
-      if (cmdLine.getArgs().length < 2)
-      {
-        throw new ParseException(
-          "Needs two arguments: corpus name and output folder");
-      }
-      annisDao.exportCorpus(cmdLine.getArgs()[0], new File(cmdLine.getArgs()[1]));
-      
-    }
-    catch (ParseException ex)
-    {
-      HelpFormatter helpFormatter = new HelpFormatter();
-      helpFormatter.printHelp("annis-admin.sh export CORPUS DIR ...",
-        options);
-    }
-  }
-        </pre>
-      </div>
-    </div>
-    <div class="col-sm-4">
-      <br/><button data-toggle="collapse" data-target="#afc8">API function calls</button>
-      
-      <ol class="afc collapse" id="afc8">
-          <li>org/apache/commons/cli/CommandLine/getOptionValue(java.lang.String)</li>
-          <li>org/apache/commons/cli/CommandLine/getOptions()</li>
-          <li>org/apache/commons/cli/CommandLine/hasOption(java.lang.String)</li>
-          <li>org/apache/commons/cli/CommandLineParser/parse(org.apache.commons.cli.Options,java.lang.String[])</li>
-          <li>org/apache/commons/cli/GnuParser/GnuParser()</li>
-          <li>org/apache/commons/cli/HelpFormatter/printHelp(java.lang.String,org.apache.commons.cli.Options)</li>
-          <li>org/apache/commons/cli/ParseException/getMessage()</li>
-          <li>au/com/bytecode/opencsv/CSVWriter/CSVWriter(java.io.Writer)</li>
-          <li>au/com/bytecode/opencsv/CSVWriter/close()</li>
-          <li>au/com/bytecode/opencsv/CSVWriter/writeAll(java.sql.ResultSet,boolean)</li>
-          <li>com/amazonaws/services/s3/AmazonS3/putObject(com.amazonaws.services.s3.model.PutObjectRequest)</li>
-          <li>com/amazonaws/services/s3/model/ObjectMetadata/ObjectMetadata()</li>
-          <li>com/amazonaws/services/s3/model/ObjectMetadata/setServerSideEncryption(java.lang.String)</li>
-          <li>com/amazonaws/services/s3/model/PutObjectRequest/PutObjectRequest(java.lang.String,java.lang.String,java.io.File)</li>
-          <li>com/amazonaws/services/s3/model/PutObjectRequest/setMetadata(com.amazonaws.services.s3.model.ObjectMetadata)</li>
-          <li>com/google/common/collect/Lists/newArrayList()</li>
-          <li>net/aparsons/sqldump/Launcher/businessLogic(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,boolean)</li>
-          <li>net/aparsons/sqldump/Launcher/getOptions()</li>
-          <li>net/aparsons/sqldump/Launcher/printUsage()</li>
-          <li>net/aparsons/sqldump/Launcher2/businessLogic(java.lang.String,java.lang.String)</li>
-      </ol>
-    </div>
-  </div>
   <hr class="style2">
 </div>
 
