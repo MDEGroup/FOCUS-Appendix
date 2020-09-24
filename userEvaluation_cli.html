@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>FOCUS - Mining FunctiOn Calls and USage patterns</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <style>
+    hr.style2 {
+      border-top: 3px double #8c8b8b;
+    }
+    ol.afc li{
+      font-family: courier, courier new, serif;
+      font-size: 10px
+    }
+  </style>
+</head>
+<body>
+
+<div class="jumbotron text-center">
+  <h1>FOCUS - Mining FunctiOn Calls and USage patterns</h1>
+  <p>This page is the online appendix for the paper entitled: "Recommending API Function Calls and Code Snippets to Support Software Development" submitted to the IEEE Transactions on Software Engineering. We introduce additional code examples recommended by FOCUS</p> 
+</div> 
+  <div class="row">
+    <div class="col-sm-12" align="center">
+      <h1>Apache-cli recommendations</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <h3>Context code</h3>
+    </div>
+    <div class="col-sm-4">
+      <h3>Recommended code snippets</h3>
+    </div>
+    <div class="col-sm-4">
+      <h3>Recommended API calls</h3>
+    </div>
+  </div>
+  <hr class="style2">
+  
+  <div class="row" id="query5">
+    <div class="col-sm-4">
+        <pre class="prettyprint">
+  public static Options getOptions() {
+    final Options options = new Options();
+    
+     
+    final Option urlOption = new Option("url", true, "A database url of the form jdbc:subprotocol:subname");
+    
+    final OptionGroup urlGroup = new OptionGroup();
+    urlGroup.setRequired(true);
+    urlGroup.addOption(urlOption);
+    options.addOptionGroup(urlGroup);
+    
+
+    return options;
+  }
+          </pre>
+    </div>
+    <div class="col-sm-4">
+      <br/><button data-toggle="collapse" data-target="#q5_1">Result 1</button>
+      <div class="row collapse" id="q5_1">
+        <pre class="prettyprint">
+  public static void main(String[] args) {
+        final Options options = new Options();
+
+        Option lsOption = new Option("ls", true, "list zp path contents");
+        lsOption.setArgName("path");
+        Option readOption = new Option("read", true, "read and print zp path contents");
+        readOption.setArgName("path");
+        Option rmOption = new Option("rm", true, "remove zk files");
+        rmOption.setArgName("path");
+        Option rmrOption = new Option("rmr", true, "remove zk directories");
+        rmrOption.setArgName("path");
+
+        OptionGroup actionGroup = new OptionGroup();
+        actionGroup.setRequired(true);
+        actionGroup.addOption(lsOption);
+        actionGroup.addOption(readOption);
+        actionGroup.addOption(rmOption);
+        actionGroup.addOption(rmrOption);
+        options.addOptionGroup(actionGroup);
+
+        final CommandLineParser parser = new GnuParser();
+        HelpFormatter formatter = new HelpFormatter();
+        try {
+            final CommandLine line = parser.parse(options, args);
+            ZkTool zkTool = new ZkTool();
+            if (line.hasOption(lsOption.getOpt())) {
+                String path = line.getOptionValue(lsOption.getOpt());
+                zkTool.ls(path);
+            } else if (line.hasOption(readOption.getOpt())) {
+                String path = line.getOptionValue(readOption.getOpt());
+                zkTool.read(path);
+            } else if (line.hasOption(rmOption.getOpt())) {
+                String path = line.getOptionValue(rmOption.getOpt());
+                zkTool.rm(path, false);
+            } else if (line.hasOption(rmrOption.getOpt())) {
+                String path = line.getOptionValue(rmrOption.getOpt());
+                zkTool.rm(path, true);
+            }
+            zkTool.close();
+        } catch (ParseException e) {
+            System.out.println(e.getClass().getSimpleName() + ": " + e.getMessage());
+            formatter.printHelp(ZkTool.class.getSimpleName(), options);
+        }
+
+    }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q5_2">Result 2</button>
+      <div class="row collapse" id="q5_2">
+        <pre class="prettyprint">
+  public static void main(final String[] args)
+    throws IOException
+  {
+    final Console console = new Console();
+    final Option helpOption = new Option("h", "help", false, "print this help");
+    final Option versionOption = new Option("v", "version", false, "print version information");
+    final Option serverURLOption = new Option("s", "serverURL", true,
+        "URL of Sesame server to connect to, e.g. http://localhost/openrdf-sesame/");
+    final Option dirOption = new Option("d", "dataDir", true, "Sesame data dir to 'connect' to");
+    Option echoOption = new Option("e", "echo", false,
+        "echoes input back to stdout, useful for logging script sessions");
+    Option quietOption = new Option("q", "quiet", false, "suppresses prompts, useful for scripting");
+    Option forceOption = new Option("f", "force", false,
+        "always answer yes to (suppressed) confirmation prompts");
+    Option cautiousOption = new Option("c", "cautious", false,
+        "always answer no to (suppressed) confirmation prompts");
+    Option exitOnErrorMode = new Option("x", "exitOnError", false,
+        "immediately exit the console on the first error");
+    final Options options = new Options();
+    OptionGroup cautionGroup = new OptionGroup().addOption(cautiousOption).addOption(forceOption).addOption(
+        exitOnErrorMode);
+    OptionGroup locationGroup = new OptionGroup().addOption(serverURLOption).addOption(dirOption);
+    options.addOptionGroup(locationGroup).addOptionGroup(cautionGroup);
+    options.addOption(helpOption).addOption(versionOption).addOption(echoOption).addOption(quietOption);
+    CommandLine commandLine = parseCommandLine(args, console, options);
+    handleInfoOptions(console, helpOption, versionOption, options, commandLine);
+    console.consoleIO.setEcho(commandLine.hasOption(echoOption.getOpt()));
+    console.consoleIO.setQuiet(commandLine.hasOption(quietOption.getOpt()));
+    exitOnError = commandLine.hasOption(exitOnErrorMode.getOpt());
+    String location = handleOptionGroups(console, serverURLOption, dirOption, forceOption, cautiousOption,
+        options, cautionGroup, locationGroup, commandLine);
+    final String[] otherArgs = commandLine.getArgs();
+    if (otherArgs.length > 1) {
+      printUsage(console.consoleIO, options);
+      System.exit(1);
+    }
+    connectAndOpen(console, locationGroup.getSelected(), location, otherArgs);
+    console.start();
+  }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q5_3">Result 3</button>
+      <div class="row collapse" id="q5_3">
+        <pre class="prettyprint">
+  public static void main(final String[] args)
+    throws IOException
+  {
+    final Console console = new Console();
+    final Option helpOption = new Option("h", "help", false, "print this help");
+    final Option versionOption = new Option("v", "version", false, "print version information");
+    final Option serverURLOption = new Option("s", "serverURL", true,
+        "URL of RDF4J Server to connect to, e.g. http://localhost:8080/rdf4j-server/");
+    final Option dirOption = new Option("d", "dataDir", true, "data dir to 'connect' to");
+    Option echoOption = new Option("e", "echo", false,
+        "echoes input back to stdout, useful for logging script sessions");
+    Option quietOption = new Option("q", "quiet", false, "suppresses prompts, useful for scripting");
+    Option forceOption = new Option("f", "force", false,
+        "always answer yes to (suppressed) confirmation prompts");
+    Option cautiousOption = new Option("c", "cautious", false,
+        "always answer no to (suppressed) confirmation prompts");
+    Option exitOnErrorMode = new Option("x", "exitOnError", false,
+        "immediately exit the console on the first error");
+    final Options options = new Options();
+    OptionGroup cautionGroup = new OptionGroup().addOption(cautiousOption).addOption(
+        forceOption).addOption(exitOnErrorMode);
+    OptionGroup locationGroup = new OptionGroup().addOption(serverURLOption).addOption(dirOption);
+    options.addOptionGroup(locationGroup).addOptionGroup(cautionGroup);
+    options.addOption(helpOption).addOption(versionOption).addOption(echoOption).addOption(quietOption);
+    CommandLine commandLine = parseCommandLine(args, console, options);
+    handleInfoOptions(console, helpOption, versionOption, options, commandLine);
+    console.consoleIO.setEcho(commandLine.hasOption(echoOption.getOpt()));
+    console.consoleIO.setQuiet(commandLine.hasOption(quietOption.getOpt()));
+    exitOnError = commandLine.hasOption(exitOnErrorMode.getOpt());
+    String location = handleOptionGroups(console, serverURLOption, dirOption, forceOption, cautiousOption,
+        options, cautionGroup, locationGroup, commandLine);
+    final String[] otherArgs = commandLine.getArgs();
+    if (otherArgs.length > 1) {
+      printUsage(console.consoleIO, options);
+      System.exit(1);
+    }
+    connectAndOpen(console, locationGroup.getSelected(), location, otherArgs);
+    console.start();
+  }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q5_4">Result 4</button>
+      <div class="row collapse" id="q5_4">
+        <pre class="prettyprint">
+  @SuppressWarnings("static-access")
+  private void createOptions()
+  {
+    Option sourceOption =
+      OptionBuilder.hasArg().isRequired().withLongOpt(SOURCE_SESSION).withDescription(
+        "The name of the source alias to copy tables from").create();
+    options.addOption(sourceOption);
+    
+    Option destOption = 
+      OptionBuilder.hasArg().isRequired().withLongOpt(DEST_SESSION).withDescription(
+        "The name of the destination alias to copy tables to").create();
+    options.addOption(destOption);
+
+    Option sourceSchemaOption = 
+      OptionBuilder.hasArg().withLongOpt(SOURCE_SCHEMA).withDescription(
+        "The source schema to copy tables from").create();
+    
+    Option sourceCatalogOption = 
+      OptionBuilder.hasArg().withLongOpt(SOURCE_CATALOG).withDescription(
+        "The source catalog to copy tables from").create();
+    
+    OptionGroup sourceSchemaGroup = new OptionGroup();
+    sourceSchemaGroup.setRequired(true);
+    sourceSchemaGroup.addOption(sourceSchemaOption);
+    sourceSchemaGroup.addOption(sourceCatalogOption);
+    
+    options.addOptionGroup(sourceSchemaGroup);
+    
+    Option listOption = 
+      OptionBuilder.hasArg().withLongOpt(TABLE_LIST).withDescription(
+        "A comma-delimited list of tables to copy").create();
+    Option patternOption = 
+      OptionBuilder.hasArg().withLongOpt(TABLE_PATTERN).withDescription(
+        "A regexp pattern to match source table names").create();
+    
+    OptionGroup tableGroup = new OptionGroup();
+    tableGroup.setRequired(true);
+    tableGroup.addOption(listOption);
+    tableGroup.addOption(patternOption);
+    
+    options.addOptionGroup(tableGroup);
+    
+    Option destSchemaOption = 
+      OptionBuilder.hasArg().withLongOpt(DEST_SCHEMA).withDescription(
+        "The destination schema to copy tables into").create();
+    
+    Option destCatalogOption = 
+      OptionBuilder.hasArg().withLongOpt(DEST_CATALOG).withDescription(
+        "The destination catalog to copy tables into").create();
+    
+    OptionGroup destSchemaGroup = new OptionGroup();
+    destSchemaGroup.setRequired(true);
+    destSchemaGroup.addOption(destSchemaOption);
+    destSchemaGroup.addOption(destCatalogOption);
+    
+    options.addOptionGroup(destSchemaGroup);
+    
+    
+  } 
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q5_5">Result 5</button>
+      <div class="row collapse" id="q5_5">
+        <pre class="prettyprint">
+  /**
+     * Create option for command line option 'job'
+     * @return job options
+     */
+    protected Options createJobOptions() {
+        Option oozie = new Option(OOZIE_OPTION, true, "Oozie URL");
+        Option config = new Option(CONFIG_OPTION, true, "job configuration file '.xml' or '.properties'");
+        Option submit = new Option(SUBMIT_OPTION, false, "submit a job");
+        Option run = new Option(RUN_OPTION, false, "run a job");
+        Option debug = new Option(DEBUG_OPTION, false, "Use debug mode to see debugging statements on stdout");
+        Option rerun = new Option(RERUN_OPTION, true,
+                "rerun a job  (coordinator requires -action or -date, bundle requires -coordinator or -date)");
+        Option dryrun = new Option(DRYRUN_OPTION, false, "Dryrun a workflow (since 3.3.2) or coordinator (since 2.0) job without"
+                + " actually executing it");
+        Option update = new Option(UPDATE_OPTION, true, "Update coord definition and properties");
+        Option showdiff = new Option(SHOWDIFF_OPTION, true,
+                "Show diff of the new coord definition and properties with the existing one (default true)");
+        Option start = new Option(START_OPTION, true, "start a job");
+        Option suspend = new Option(SUSPEND_OPTION, true, "suspend a job");
+        Option resume = new Option(RESUME_OPTION, true, "resume a job");
+        Option kill = new Option(KILL_OPTION, true, "kill a job (coordinator can mention -action or -date)");
+        Option change = new Option(CHANGE_OPTION, true, "change a coordinator or bundle job");
+        Option changeValue = new Option(CHANGE_VALUE_OPTION, true,
+                "new endtime/concurrency/pausetime value for changing a coordinator job");
+        Option info = new Option(INFO_OPTION, true, "info of a job");
+        Option poll = new Option(POLL_OPTION, true, "poll Oozie until a job reaches a terminal state or a timeout occurs");
+        Option offset = new Option(OFFSET_OPTION, true, "job info offset of actions (default '1', requires -info)");
+        Option len = new Option(LEN_OPTION, true, "number of actions (default TOTAL ACTIONS, requires -info)");
+        Option filter = new Option(FILTER_OPTION, true,
+                "<key><comparator><value>[;<key><comparator><value>]*\n"
+                    + "(All Coordinator actions satisfying the filters will be retreived).\n"
+                    + "key: status or nominaltime\n"
+                    + "comparator: =, !=, <, <=, >, >=. = is used as OR and others as AND\n"
+                    + "status: values are valid status like SUCCEEDED, KILLED etc. Only = and != apply for status\n"
+                    + "nominaltime: time of format yyyy-MM-dd'T'HH:mm'Z'");
+        Option order = new Option(ORDER_OPTION, true,
+                "order to show coord actions (default ascending order, 'desc' for descending order, requires -info)");
+        Option localtime = new Option(LOCAL_TIME_OPTION, false, "use local time (same as passing your time zone to -" +
+                TIME_ZONE_OPTION + "). Overrides -" + TIME_ZONE_OPTION + " option");
+        Option timezone = new Option(TIME_ZONE_OPTION, true,
+                "use time zone with the specified ID (default GMT).\nSee 'oozie info -timezones' for a list");
+        Option log = new Option(LOG_OPTION, true, "job log");
+        Option errorlog = new Option(ERROR_LOG_OPTION, true, "job error log");
+        Option auditlog = new Option(AUDIT_LOG_OPTION, true, "job audit log");
+        Option logFilter = new Option(
+                RestConstants.LOG_FILTER_OPTION, true,
+                "job log search parameter. Can be specified as -logfilter opt1=val1;opt2=val1;opt3=val1. "
+                + "Supported options are recent, start, end, loglevel, text, limit and debug");
+        Option definition = new Option(DEFINITION_OPTION, true, "job definition");
+        Option config_content = new Option(CONFIG_CONTENT_OPTION, true, "job configuration");
+        Option verbose = new Option(VERBOSE_OPTION, false, "verbose mode");
+        Option action = new Option(ACTION_OPTION, true,
+                "coordinator rerun/kill on action ids (requires -rerun/-kill); coordinator log retrieval on action ids"
+                        + "(requires -log)");
+        Option date = new Option(DATE_OPTION, true,
+                "coordinator/bundle rerun on action dates (requires -rerun); coordinator log retrieval on action dates (requires -log)");
+        Option rerun_coord = new Option(COORD_OPTION, true, "bundle rerun on coordinator names (requires -rerun)");
+        Option rerun_refresh = new Option(RERUN_REFRESH_OPTION, false,
+                "re-materialize the coordinator rerun actions (requires -rerun)");
+        Option rerun_nocleanup = new Option(RERUN_NOCLEANUP_OPTION, false,
+                "do not clean up output-events of the coordiantor rerun actions (requires -rerun)");
+        Option rerun_failed = new Option(RERUN_FAILED_OPTION, false,
+                "runs the failed workflow actions of the coordinator actions (requires -rerun)");
+        Option property = OptionBuilder.withArgName("property=value").hasArgs(2).withValueSeparator().withDescription(
+                "set/override value for given property").create("D");
+        Option getAllWorkflows = new Option(ALL_WORKFLOWS_FOR_COORD_ACTION, false,
+                "Get workflow jobs corresponding to a coordinator action including all the reruns");
+        Option ignore = new Option(IGNORE_OPTION, true,
+                "change status of a coordinator job or action to IGNORED"
+                + " (-action required to ignore coord actions)");
+        Option timeout = new Option(TIMEOUT_OPTION, true, "timeout in minutes (default is 30, negative values indicate no "
+                + "timeout, requires -poll)");
+        timeout.setType(Integer.class);
+        Option interval = new Option(INTERVAL_OPTION, true, "polling interval in minutes (default is 5, requires -poll)");
+        interval.setType(Integer.class);
+
+        Option slaDisableAlert = new Option(SLA_DISABLE_ALERT, true,
+                "disables sla alerts for the job and its children");
+        Option slaEnableAlert = new Option(SLA_ENABLE_ALERT, true,
+                "enables sla alerts for the job and its children");
+        Option slaChange = new Option(SLA_CHANGE, true,
+                "Update sla param for jobs, supported param are should-start, should-end, nominal-time and max-duration");
+
+
+        Option doAs = new Option(DO_AS_OPTION, true, "doAs user, impersonates as the specified user");
+
+        OptionGroup actions = new OptionGroup();
+        actions.addOption(submit);
+        actions.addOption(start);
+        actions.addOption(run);
+        actions.addOption(dryrun);
+        actions.addOption(suspend);
+        actions.addOption(resume);
+        actions.addOption(kill);
+        actions.addOption(change);
+        actions.addOption(update);
+        actions.addOption(info);
+        actions.addOption(rerun);
+        actions.addOption(log);
+        actions.addOption(errorlog);
+        actions.addOption(auditlog);
+        actions.addOption(definition);
+        actions.addOption(config_content);
+        actions.addOption(ignore);
+        actions.addOption(poll);
+        actions.addOption(slaDisableAlert);
+        actions.addOption(slaEnableAlert);
+        actions.addOption(slaChange);
+
+        actions.setRequired(true);
+        Options jobOptions = new Options();
+        jobOptions.addOption(oozie);
+        jobOptions.addOption(doAs);
+        jobOptions.addOption(config);
+        jobOptions.addOption(property);
+        jobOptions.addOption(changeValue);
+        jobOptions.addOption(localtime);
+        jobOptions.addOption(timezone);
+        jobOptions.addOption(verbose);
+        jobOptions.addOption(debug);
+        jobOptions.addOption(offset);
+        jobOptions.addOption(len);
+        jobOptions.addOption(filter);
+        jobOptions.addOption(order);
+        jobOptions.addOption(action);
+        jobOptions.addOption(date);
+        jobOptions.addOption(rerun_coord);
+        jobOptions.addOption(rerun_refresh);
+        jobOptions.addOption(rerun_nocleanup);
+        jobOptions.addOption(rerun_failed);
+        jobOptions.addOption(getAllWorkflows);
+        jobOptions.addOptionGroup(actions);
+        jobOptions.addOption(logFilter);
+        jobOptions.addOption(timeout);
+        jobOptions.addOption(interval);
+        addAuthOptions(jobOptions);
+        jobOptions.addOption(showdiff);
+
+        //Needed to make dryrun and update mutually exclusive options
+        OptionGroup updateOption = new OptionGroup();
+        updateOption.addOption(dryrun);
+        jobOptions.addOptionGroup(updateOption);
+
+        return jobOptions;
+    }
+        </pre>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <br/><button data-toggle="collapse" data-target="#afc5">API function calls</button>
+      
+      <ol class="afc collapse" id="afc5">
+        <li>org/apache/commons/cli/Option/Option(java.lang.String,java.lang.String,boolean,java.lang.String)</li>
+        <li>org/apache/commons/cli/OptionBuilder/create(java.lang.String)</li>
+        <li>org/apache/commons/cli/OptionBuilder/hasArg()</li>
+        <li>org/apache/commons/cli/OptionBuilder/withArgName(java.lang.String)</li>
+        <li>org/apache/commons/cli/OptionBuilder/withDescription(java.lang.String)</li>
+        <li>org/apache/commons/cli/OptionBuilder/withLongOpt(java.lang.String)</li>
+        <li>org/apache/commons/cli/Options/addOption(org.apache.commons.cli.Option)</li>
+        <li>au/com/bytecode/opencsv/CSVWriter/CSVWriter(java.io.Writer)</li>
+        <li>au/com/bytecode/opencsv/CSVWriter/close()</li>
+        <li>au/com/bytecode/opencsv/CSVWriter/writeAll(java.sql.ResultSet,boolean)</li>
+        <li>com/amazonaws/services/s3/AmazonS3/putObject  (com.amazonaws.services.s3.model.PutObjectRequest)</li>
+        <li>com/amazonaws/services/s3/model/ObjectMetadata/ObjectMetadata()</li>
+        <li>com/amazonaws/services/s3/model/ObjectMetadata/setServerSideEncryption(java.lang.String)</li>
+        <li>com/amazonaws/services/s3/model/PutObjectRequest/PutObjectRequest (java.lang.String,java.lang.String,java.io.File)</li>
+        <li>com/amazonaws/services/s3/model/PutObjectRequest/setMetadata(com.amazonaws.services.s3.model.ObjectMetadata)</li>
+        <li>com/google/common/collect/Lists/newArrayList()</li>
+        <li>net/aparsons/sqldump/Launcher/businessLogic (java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,boolean)</li>
+        <li>net/aparsons/sqldump/Launcher/getOptions()</li>
+        <li>net/aparsons/sqldump/Launcher/printUsage()</li>
+        <li>net/aparsons/sqldump/Launcher2/businessLogic(java.lang.String,java.lang.String)</li>
+      </ol>
+    </div>
+  </div>
+  <hr class="style2">
+    <div class="row" id="query6">
+    <div class="col-sm-4">
+        <pre class="prettyprint">
+    public static void main(String[] args) {
+    try {
+      CommandLineParser parser = new GnuParser();
+      CommandLine cmdLine = parser.parse(getOptions(), args);
+      if(!cmdLine.hasOption("url")) throw new ParseException("No url is specifified");
+      String url = cmdLine.getOptionValue("url");
+      
+      String username = "", password = "", sql = "", file = "", protocol = "";
+      //Complete the parameter parser code 
+      //HERE
+      //
+      
+      boolean includeHeaders = false;
+      businessLogic(protocol, url, username, password, sql, file, includeHeaders);
+    } catch (ParseException pe) {
+      printUsage();
+    }
+  }
+          </pre>
+    </div>
+    <div class="col-sm-4">
+      <br/><button data-toggle="collapse" data-target="#q6_1">Result 1</button>
+      <div class="row collapse" id="q6_1">
+        <pre class="prettyprint">
+  /**
+     * Parses command line parameters.
+     * 
+     * @param args command line parameters
+     * @return command line arguments and options
+     */
+    public CmdLineArgs parse(String[] args) {
+
+        CmdLineArgs cmdArgs = new CmdLineArgs();
+
+        // Process command line arguments
+        try {
+            CommandLineParser cmdLineParser = new GnuParser();
+            Options cmdOptions = getCmdOptions();
+
+            CommandLine commandLine = cmdLineParser.parse(cmdOptions, args);
+
+            if (commandLine.hasOption(JAR_PATH_OPTION_NAME)) {
+                cmdArgs.setJarpath(commandLine.getOptionValue(JAR_PATH_OPTION_NAME));
+            }
+            if (commandLine.hasOption(OUTPUT_XML_PATH_OPTION_NAME)) {
+                cmdArgs.setOutpath(commandLine.getOptionValue(OUTPUT_XML_PATH_OPTION_NAME));
+            }
+            if (commandLine.hasOption(TYPES_XML_PATH_OPTION_NAME)) {
+                cmdArgs.setTypesXmlPath(commandLine.getOptionValue(TYPES_XML_PATH_OPTION_NAME));
+            }
+
+            cmdArgs.setHelp(commandLine.hasOption(HELP_OPTION_NAME));
+            cmdArgs.setExportTypes(commandLine.hasOption(TYPE_EXPORT_OPTION_NAME));
+            cmdArgs.setExportMessages(commandLine.hasOption(MSG_EXPORT_OPTION_NAME));
+            cmdArgs.setQuietReflectionErrors(commandLine.hasOption(QUIET_REFLECTION_ERRORS_OPTION_NAME));
+            cmdArgs.setGenerateTypes(commandLine.hasOption(GENERATE_TYPES_OPTION_NAME));
+
+            if (!cmdArgs.hasHelpOption()) {
+                if (commandLine.getArgs().length == 0) {
+                    throw new RuntimeException("Source file is not defined");
+                }
+
+                if (commandLine.getArgs().length > 1) {
+                    throw new RuntimeException("Cannot resolve source file");
+                }
+
+                cmdArgs.setSourcepath(commandLine.getArgs()[0]);
+            }
+        } catch (ParseException parseException) {
+            LOG.error("Encountered exception while parsing command line arguments", parseException);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(cmdArgs.toString());
+        }
+
+        return cmdArgs;
+    }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q6_2">Result 2</button>
+      <div class="row collapse" id="q6_2">
+        <pre class="prettyprint">
+  private void handleNetezzaExtraArgs(SqoopOptions opts)
+      throws ParseException {
+
+    Configuration conf = opts.getConf();
+
+    String[] extraArgs = opts.getExtraArgs();
+
+    RelatedOptions netezzaOpts = getNetezzaExtraOpts();
+    CommandLine cmdLine = new GnuParser().parse(netezzaOpts, extraArgs, true);
+    if (cmdLine.hasOption(NETEZZA_ERROR_THRESHOLD_LONG_ARG)) {
+      int threshold = Integer.parseInt(cmdLine
+          .getOptionValue(NETEZZA_ERROR_THRESHOLD_LONG_ARG));
+      conf.setInt(NETEZZA_ERROR_THRESHOLD_OPT, threshold);
+    }
+    if (cmdLine.hasOption(NETEZZA_LOG_DIR_LONG_ARG)) {
+      String dir = cmdLine.getOptionValue(NETEZZA_LOG_DIR_LONG_ARG);
+      conf.set(NETEZZA_LOG_DIR_OPT, dir);
+    }
+    if (cmdLine.hasOption(NETEZZA_TABLE_ENCODING_LONG_ARG)) {
+      String encoding = cmdLine
+          .getOptionValue(NETEZZA_TABLE_ENCODING_LONG_ARG);
+      conf.set(NETEZZA_TABLE_ENCODING_OPT, encoding);
+    }
+    
+    conf.setBoolean(NETEZZA_CTRL_CHARS_OPT,
+      cmdLine.hasOption(NETEZZA_CTRL_CHARS_LONG_ARG));
+
+    conf.setBoolean(NETEZZA_TRUNC_STRING_OPT,
+      cmdLine.hasOption(NETEZZA_TRUNC_STRING_LONG_ARG));
+
+    conf.setBoolean(NETEZZA_CRIN_STRING_OPT,
+      cmdLine.hasOption(NETEZZA_CRIN_STRING_LONG_ARG));
+
+    conf.setBoolean(NETEZZA_IGNORE_ZERO_OPT,
+      cmdLine.hasOption(NETEZZA_IGNORE_ZERO_LONG_ARG));
+
+    // Always true for Netezza direct mode access
+    conf.setBoolean(NETEZZA_DATASLICE_ALIGNED_ACCESS_OPT, true);
+  } 
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q6_3">Result 3</button>
+      <div class="row collapse" id="q6_3">
+        <pre class="prettyprint">
+  @Override
+  public int run(String[] args) throws Exception {
+    Options opts = new Options();
+
+    opts.addOption(STATUS_CMD, true,
+        "List queue information about given queue.");
+    opts.addOption(HELP_CMD, false, "Displays help for all commands.");
+    opts.getOption(STATUS_CMD).setArgName("Queue Name");
+
+    CommandLine cliParser = null;
+    try {
+      cliParser = new GnuParser().parse(opts, args);
+    } catch (MissingArgumentException ex) {
+      sysout.println("Missing argument for options");
+      printUsage(opts);
+      return -1;
+    }
+
+    if (cliParser.hasOption(STATUS_CMD)) {
+      if (args.length != 2) {
+        printUsage(opts);
+        return -1;
+      }
+      return listQueue(cliParser.getOptionValue(STATUS_CMD));
+    } else if (cliParser.hasOption(HELP_CMD)) {
+      printUsage(opts);
+      return 0;
+    } else {
+      syserr.println("Invalid Command Usage : ");
+      printUsage(opts);
+      return -1;
+    }
+  }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q6_4">Result 4</button>
+      <div class="row collapse" id="q6_4">
+        <pre class="prettyprint">
+  /**
+     * @param args
+     * @throws Exception
+     */
+    public static void main(final String[] args) throws Exception {
+        final Parser parser = new GnuParser();
+        final HelpFormatter formatter = new HelpFormatter();
+        final Options options = new Options();
+
+        options.addOption("c", CACHE, true, "chache directory (mandatory!)");
+        options.addOption("s", SERVER, true, "server name and port number as server:port");
+        options.addOption("x", USE_SSL, false, "use ssl");
+        options.addOption("?", HELP, false, "display help");
+
+        final CommandLine cli = parser.parse(options, args);
+        final String server = cli.getOptionValue(SERVER);
+        final String cache = cli.getOptionValue(CACHE);
+        final boolean ssl = cli.hasOption(USE_SSL);
+
+        if (cli.hasOption(HELP) || cache == null) {
+            formatter.printHelp(CachingRESTProxy.class.getName(), options);
+            return;
+        }
+
+        final CachingRESTProxy proxy = new CachingRESTProxy(ssl, server, new File(cache));
+
+        proxy.start();
+    }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q6_5">Result 5</button>
+      <div class="row collapse" id="q6_5">
+        <pre class="prettyprint">
+  protected SyncOptimizeConfig processOptions(String[] args)
+        throws ParseException {
+        CommandLineParser parser = new PosixParser();
+        CommandLine cmd = parser.parse(cmdOptions, args);
+        SyncOptimizeConfig config = new SyncOptimizeConfig();
+
+        config.setContext(DEFAULT_CONTEXT);
+        config.setHost(cmd.getOptionValue("h"));
+        config.setUsername(cmd.getOptionValue("u"));
+        config.setSpaceId(cmd.getOptionValue("s"));
+
+        if (null != cmd.getOptionValue("p")) {
+            config.setPassword(cmd.getOptionValue("p"));
+        } else if (null != getPasswordEnvVariable()) {
+            config.setPassword(getPasswordEnvVariable());
+        } else {
+            ConsolePrompt console = getConsole();
+            if (null == console) {
+                printHelp("You must either specify a password in the command "+
+                          "line or specify the " +
+                          CommandLineToolUtil.PASSWORD_ENV_VARIABLE_NAME +
+                          " environmental variable.");
+            } else {
+                char[] password = console.readPassword("DuraCloud password: ");
+                config.setPassword(new String(password));
+            }
+        }
+
+        if(cmd.hasOption("r")) {
+            try {
+                config.setPort(Integer.valueOf(cmd.getOptionValue("r")));
+            } catch(NumberFormatException e) {
+                throw new ParseException("The value for port (-r) must be " +
+                                         "a number.");
+            }
+        } else {
+            config.setPort(DEFAULT_PORT);
+        }
+
+        if(cmd.hasOption("n")) {
+            try {
+                config.setNumFiles(Integer.valueOf(cmd.getOptionValue("n")));
+            } catch(NumberFormatException e) {
+                throw new ParseException("The value for num-files (-n) must " +
+                                         "be a number.");
+            }
+        } else {
+            config.setNumFiles(DEFAULT_NUM_FILES);
+        }
+
+        if(cmd.hasOption("m")) {
+            try {
+                config.setSizeFiles(Integer.valueOf(cmd.getOptionValue("m")));
+            } catch(NumberFormatException e) {
+                throw new ParseException("The value for size-files (-m) must " +
+                                         "be a number.");
+            }
+        } else {
+            config.setSizeFiles(DEFAULT_SIZE_FILES);
+        }
+
+        return config;
+    }
+        </pre>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <br/><button data-toggle="collapse" data-target="#afc6">API function calls</button>
+      
+      <ol class="afc collapse" id="afc6">
+        <li>org/apache/commons/cli/CommandLine/getOptions()</li>
+        <li>org/apache/commons/cli/CommandLineParser/parse(org.apache.commons.cli.Options,java.lang.String[])</li>
+        <li>org/apache/commons/cli/HelpFormatter/HelpFormatter()</li>
+        <li>org/apache/commons/cli/HelpFormatter/printHelp(java.lang.String,org.apache.commons.cli.Options)</li>
+        <li>org/apache/commons/cli/ParseException/getMessage()</li>
+        <li>au/com/bytecode/opencsv/CSVWriter/CSVWriter(java.io.Writer)</li>
+        <li>au/com/bytecode/opencsv/CSVWriter/close()</li>
+        <li>au/com/bytecode/opencsv/CSVWriter/writeAll(java.sql.ResultSet,boolean)</li>
+        <li>com/amazonaws/services/s3/AmazonS3/putObject(com.amazonaws.services.s3.model.PutObjectRequest)</li>
+        <li>com/amazonaws/services/s3/model/ObjectMetadata/ObjectMetadata()</li>
+        <li>com/amazonaws/services/s3/model/ObjectMetadata/setServerSideEncryption(java.lang.String)</li>
+        <li>com/amazonaws/services/s3/model/PutObjectRequest/PutObjectRequest(java.lang.String,java.lang.String,java.io.File)</li>
+        <li>com/amazonaws/services/s3/model/PutObjectRequest/setMetadata(com.amazonaws.services.s3.model.ObjectMetadata)</li>
+        <li>com/google/common/collect/Lists/newArrayList()</li>
+        <li>net/aparsons/sqldump/Launcher2/businessLogic(java.lang.String,java.lang.String)</li>
+        <li>net/aparsons/sqldump/Launcher2/getOptions()</li>
+        <li>net/aparsons/sqldump/db/Connectors/Connector/valueOf(java.lang.String)</li>
+        <li>net/aparsons/sqldump/db/Connectors/load(net.aparsons.sqldump.db.Connectors.Connector)</li>
+        <li>net/aparsons/sqldump/db/SQLDump/SQLDump(net.aparsons.sqldump.db.Connectors.Connector,java.lang.String,java.lang.String,java.lang.String,java.lang.String)</li>
+        <li>net/aparsons/sqldump/db/SQLDump/run()</li>
+      </ol>
+    </div>
+  </div>
+  <hr class="style2">
+  
+  <hr class="style2">
+      <div class="row" id="query8">
+    <div class="col-sm-4">
+        <pre class="prettyprint">
+  public static void printUsage() {
+    HelpFormatter printer = new HelpFormatter();
+    //Complete the helper code 
+    //HERE
+    //
+  }
+          </pre>
+    </div>
+    <div class="col-sm-4">
+      <br/><button data-toggle="collapse" data-target="#q8_1">Result 1</button>
+      <div class="row collapse" id="q8_1">
+        <pre class="prettyprint">
+    protected boolean parseCommandline(final String[] args)
+    {
+        try
+        {
+            _commandLine = new PosixParser().parse(OPTIONS, args);
+
+            return true;
+        }
+        catch (ParseException e)
+        {
+            System.err.println("Error: " + e.getMessage());
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("Qpid", OPTIONS, true);
+
+            return false;
+        }
+    }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q8_2">Result 2</button>
+      <div class="row collapse" id="q8_2">
+        <pre class="prettyprint">
+  public static void main(String[] args) throws Exception {
+    CommandLine cmd = new GnuParser().parse(opts, args);
+    if (cmd.hasOption("help")) {
+      new HelpFormatter().printHelp("Usage: hbgen [OPTIONS]", opts);
+      return;
+    }
+    // defaults
+    Class<?> specClass = HamletSpec.class;
+    Class<?> implClass = HamletImpl.class;
+    String outputClass = "HamletTmp";
+    String outputPackage = implClass.getPackage().getName();
+    if (cmd.hasOption("spec-class")) {
+      specClass = Class.forName(cmd.getOptionValue("spec-class"));
+    }
+    if (cmd.hasOption("impl-class")) {
+      implClass = Class.forName(cmd.getOptionValue("impl-class"));
+    }
+    if (cmd.hasOption("output-class")) {
+      outputClass = cmd.getOptionValue("output-class");
+    }
+    if (cmd.hasOption("output-package")) {
+      outputPackage = cmd.getOptionValue("output-package");
+    }
+    new HamletGen().generate(specClass, implClass, outputClass, outputPackage);
+  }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q8_3">Result 3</button>
+      <div class="row collapse" id="q8_3">
+        <pre class="prettyprint">
+  public static void main(String[] args) throws Exception {
+    Options options = new Options();
+    options.addOption(ARG_COLLECTION, true, "File name of the POSTMAN collection.");
+    options.addOption(ARG_ENVIRONMENT, true, "File name of the POSTMAN environment variables.");
+    options.addOption(ARG_FOLDER, true,
+        "(Optional) POSTMAN collection folder (group) to execute i.e. \"My Use Cases\"");
+    options.addOption(ARG_HALTONERROR, false, "(Optional) Stop on first error in POSTMAN folder.");
+
+    CommandLineParser parser = new BasicParser();
+    CommandLine cmd = parser.parse(options, args);
+    String colFilename = cmd.getOptionValue(ARG_COLLECTION);
+    String envFilename = cmd.getOptionValue(ARG_ENVIRONMENT);
+    String folderName = cmd.getOptionValue(ARG_FOLDER);
+    boolean haltOnError = cmd.hasOption(ARG_HALTONERROR);
+
+    if (colFilename == null || colFilename.isEmpty() || envFilename == null || envFilename.isEmpty()) {
+      // automatically generate the help statement
+      HelpFormatter formatter = new HelpFormatter();
+      formatter.printHelp("postman-runner", options);
+      return;
+    }
+
+    PostmanCollectionRunner pcr = new PostmanCollectionRunner();
+    pcr.runCollection(colFilename, envFilename, folderName, haltOnError, false);
+  }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q8_4">Result 4</button>
+      <div class="row collapse" id="q8_4">
+        <pre class="prettyprint">
+  private static void showHelp()
+  {
+    final HelpFormatter formatter = new HelpFormatter();
+    final PrintWriter pw = new PrintWriter(System.err);
+    final String version = JSCMain.getVersion();
+
+    pw.println("jsc: [options] --check        file");
+    pw.println("  or [options] --xhtml-single file outdir");
+    pw.println("  or [options] --xhtml-multi  file outdir");
+    pw.println("  or [options] --version");
+    pw.println();
+    formatter.printOptions(pw, 120, JSCMain.OPTIONS, 2, 4);
+    pw.println();
+    pw.println("  Version: " + version);
+    pw.println();
+    pw.flush();
+  }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q8_5">Result 5</button>
+      <div class="row collapse" id="q8_5">
+        <pre class="prettyprint">
+  private void doExport(List<String> commandArgs)
+  {
+    Options options = new OptionBuilder()
+      .createOptions();
+
+    try
+    {
+
+      CommandLineParser parser = new PosixParser();
+      CommandLine cmdLine = parser.parse(options, commandArgs.toArray(
+        new String[commandArgs.size()]));
+
+      if (cmdLine.getArgs().length < 2)
+      {
+        throw new ParseException(
+          "Needs two arguments: corpus name and output folder");
+      }
+      annisDao.exportCorpus(cmdLine.getArgs()[0], new File(cmdLine.getArgs()[1]));
+      
+    }
+    catch (ParseException ex)
+    {
+      HelpFormatter helpFormatter = new HelpFormatter();
+      helpFormatter.printHelp("annis-admin.sh export CORPUS DIR ...",
+        options);
+    }
+  }
+        </pre>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <br/><button data-toggle="collapse" data-target="#afc8">API function calls</button>
+      
+      <ol class="afc collapse" id="afc8">
+          <li>org/apache/commons/cli/CommandLine/getOptionValue(java.lang.String)</li>
+          <li>org/apache/commons/cli/CommandLine/getOptions()</li>
+          <li>org/apache/commons/cli/CommandLine/hasOption(java.lang.String)</li>
+          <li>org/apache/commons/cli/CommandLineParser/parse(org.apache.commons.cli.Options,java.lang.String[])</li>
+          <li>org/apache/commons/cli/GnuParser/GnuParser()</li>
+          <li>org/apache/commons/cli/HelpFormatter/printHelp(java.lang.String,org.apache.commons.cli.Options)</li>
+          <li>org/apache/commons/cli/ParseException/getMessage()</li>
+          <li>au/com/bytecode/opencsv/CSVWriter/CSVWriter(java.io.Writer)</li>
+          <li>au/com/bytecode/opencsv/CSVWriter/close()</li>
+          <li>au/com/bytecode/opencsv/CSVWriter/writeAll(java.sql.ResultSet,boolean)</li>
+          <li>com/amazonaws/services/s3/AmazonS3/putObject(com.amazonaws.services.s3.model.PutObjectRequest)</li>
+          <li>com/amazonaws/services/s3/model/ObjectMetadata/ObjectMetadata()</li>
+          <li>com/amazonaws/services/s3/model/ObjectMetadata/setServerSideEncryption(java.lang.String)</li>
+          <li>com/amazonaws/services/s3/model/PutObjectRequest/PutObjectRequest(java.lang.String,java.lang.String,java.io.File)</li>
+          <li>com/amazonaws/services/s3/model/PutObjectRequest/setMetadata(com.amazonaws.services.s3.model.ObjectMetadata)</li>
+          <li>com/google/common/collect/Lists/newArrayList()</li>
+          <li>net/aparsons/sqldump/Launcher/businessLogic(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,boolean)</li>
+          <li>net/aparsons/sqldump/Launcher/getOptions()</li>
+          <li>net/aparsons/sqldump/Launcher/printUsage()</li>
+          <li>net/aparsons/sqldump/Launcher2/businessLogic(java.lang.String,java.lang.String)</li>
+      </ol>
+    </div>
+  </div>
+  <hr class="style2">
+</div>
+
+
+
+
+</body>
+</html>

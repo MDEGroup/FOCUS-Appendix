@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>FOCUS - Mining FunctiOn Calls and USage patterns</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <style>
+    hr.style2 {
+      border-top: 3px double #8c8b8b;
+    }
+    ol.afc li{
+      font-family: courier, courier new, serif;
+      font-size: 10px
+    }
+  </style>
+</head>
+<body>
+
+<div class="jumbotron text-center">
+  <h1>FOCUS - Mining FunctiOn Calls and USage patterns</h1>
+  <p>This page is the online appendix for the paper entitled: "Recommending API Function Calls and Code Snippets to Support Software Development" submitted to the IEEE Transactions on Software Engineering. We introduce additional code examples recommended by FOCUS</p> 
+</div>
+  
+
+  <div class="row">
+    <div class="col-sm-12" align="center">
+      <h1>Jsoup recommendations</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <h3>Context code</h3>
+    </div>
+    <div class="col-sm-4">
+      <h3>Recommended code snippets</h3>
+    </div>
+    <div class="col-sm-4">
+      <h3>Recommended API calls</h3>
+    </div>
+  </div>
+  <hr class="style2">
+  <div class="row">
+    <div class="col-sm-12 text-center">
+      <h4>getCalciomercatoNews</h4>
+    </div>
+  </div>  
+  <div class="row" id="query1">
+    <div class="col-sm-4">
+        <pre class="prettyprint">
+  /*
+   * Scrape a simple mobile website page and count all news belong to "calciomercato" category
+   * Extract the required information from https://mdegroup.github.io/FOCUS-Appendix/tuttojuve.htm
+   */
+  public static int getCalciomercatoNews() throws IOException {
+    String url = "https://mdegroup.github.io/FOCUS-Appendix/tuttojuve.htm";
+    Document document = Jsoup.connect(url).get();
+    Elements images = document.select(".list-item");
+    images.parents();
+    //COMPLETE THE METHOD
+  }
+          </pre>
+    </div>
+    <div class="col-sm-4">
+      <br/><button data-toggle="collapse" data-target="#q1_1">Result 1</button>
+      <div class="row collapse" id="q1_1">
+        <pre class="prettyprint">
+  protected String getCSSSource(String htmlSource) throws Exception {
+    org.jsoup.nodes.Document htmlDocument = Jsoup.parse(htmlSource);
+
+    Elements elements = htmlDocument.select("link[type=text/css]");
+
+    StringBuilder sb = new StringBuilder();
+
+    for (Element element : elements) {
+      String href = element.attr("href");
+
+      if (!href.contains(PropsValues.PORTAL_URL)) {
+        href = PropsValues.PORTAL_URL + href;
+      }
+
+      Connection connection = Jsoup.connect(href);
+
+      org.jsoup.nodes.Document document = connection.get();
+
+      sb.append(document.text());
+
+      sb.append("\n");
+    }
+
+    return sb.toString();
+  }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q1_2">Result 2</button>
+      <div class="row collapse" id="q1_2">
+        <pre class="prettyprint">
+    public void cmdExportChildren() throws Exception {
+        String path = cmdline.getOptionValue("znode");
+        String dir = cmdline.getOptionValue("dir");
+        List<String> kids = zkClient.getChildren(path);
+        System.out.println(kids);
+        for (String kid : kids) {
+            exportPath(path + "/" + kid, dir);
+        }
+    }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q1_3">Result 3</button>
+      <div class="row collapse" id="q1_3">
+        <pre class="prettyprint">
+      /*
+     * Bridge method used by donkey.js
+     */
+    public Document jsoup(String url) {
+        try {
+            filterHostBlocker();
+
+            URL u = new URL(url);
+            long li = lastInteraction.getOrDefault(u.getHost(), 0l);
+            long delta = System.currentTimeMillis() - li;
+            if (delta < 1000) {
+                Wait.randomMillis(1000, 2000);
+            }
+            lastInteraction.put(u.getHost(), System.currentTimeMillis());
+
+            return Jsoup.connect(url)
+                        .userAgent("Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)")
+                        .followRedirects(true)
+                        .get();
+        } catch (IOException e) {
+            Exceptions.handle(LOG, e);
+            return null;
+        }
+    }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q1_4">Result 4</button>
+      <div class="row collapse" id="q1_4">
+        <pre class="prettyprint">
+    /**
+     * getHtmlElement.
+     *
+     * @return a {@link org.jsoup.nodes.Element} object.
+     */
+    public Element getHtmlElement() {
+        if (this.html == null) {
+            Element htmlElement = null;
+            Document doc = Jsoup.parse(this.htmlText);
+            List&ltNode&gt htmlNodes = doc.childNodes();
+            Node firstNode = htmlNodes.get(0);
+            if (firstNode instanceof Element) {
+                Element element = (Element) firstNode;
+                Elements elements = element.select("body");
+                if (elements.size() > 0) {
+                    if (elements.first().children().size() == 1) {
+                        htmlElement = elements.first().child(0);
+                    }
+                }
+                if (htmlElement == null) {
+                    htmlElement = doc.child(0);
+                }
+            }
+            this.html = htmlElement;
+        }
+        return this.html;
+    }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q1_5">Result 5</button>
+      <div class="row collapse" id="q1_5">
+        <pre class="prettyprint">
+  public void testNullHMM() {
+    ATable at = new ATable(true, 1, 5);
+    int[] e1 = {-1,0,3,6};
+    int[]ef = {1,2,3,1,2,3};
+    TTable_monolithic tt = new TTable_monolithic(e1, ef, 4);
+    tt.set(0, 1, 0.1f);
+    tt.set(0, 2, 0.1f);
+    tt.set(0, 3, 0.8f);
+    tt.set(1, 1, 0.3f);
+    tt.set(1, 2, 0.7f);
+    tt.set(2, 1, 0.9f);
+    tt.set(2, 2, 0.1f);
+    at.add(1, 'a', 999, 0.3f);
+    at.add(0, 'a', 999, 0.5f);
+    at.add(-1, 'a', 999, 0.4f);
+    at.add(-2, 'a', 999, 0.2f);
+    at.normalize();
+    // System.out.println(at);
+    int[] fw = {1, 3, 2, 1};
+    //int[] fw = {2, 1, 2};
+    int[] ew = {2, 1, 2}; 
+    Phrase f = new Phrase(fw, 1);
+    Phrase e = new Phrase(ew, 1);
+    PhrasePair pp = new PhrasePair(f, e);
+    hmm = new HMM_NullWord(tt, at, -1.0);
+    hmm.buildHMMTables(pp);
+    hmm.baumWelch(pp, null);
+    TTable_monolithic tc = (TTable_monolithic)tt.clone(); tc.clear();
+    ATable ac = (ATable)at.clone(); ac.clear();
+    hmm.addPartialTranslationCountsToTTable(tc);
+    hmm.addPartialJumpCountsToATable(ac);
+    System.out.println("COUNTS:\n" + tc);
+    tc.normalize();
+    ac.normalize();
+    
+    PerplexityReporter cr = new PerplexityReporter();
+    Alignment a = hmm.viterbiAlign(pp, cr);
+    assertEquals(a.getELength(), e.size());
+    assertEquals(a.getFLength(), f.size());
+    AlignmentPosteriorGrid pg = hmm.computeAlignmentPosteriors(pp);
+    System.out.println(a.toStringVisual() + "\nPG:\n"+pg + "\n"+cr + "\n");
+    System.out.println(hmm.emission);
+    System.out.println(hmm.transition);
+    System.out.println("Done NULL");
+  }
+        </pre>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      
+      <br/><button data-toggle="collapse" data-target="#afc1">API function calls</button>
+      
+      <ol class="afc collapse" id="afc1">
+        <li>org.jsoup.Connection.userAgent(java.lang.String)</li>
+        <li>org.jsoup.nodes.Document.children()</li>
+        <li>org.jsoup.nodes.Document.select(java.lang.String)</li>
+        <li>org.jsoup.nodes.Element.children()</li>
+        <li>org.jsoup.select.Elements.attr(java.lang.String)</li>
+        <li>org.jsoup.select.Elements.first()</li>
+        <li>org.jsoup.select.Elements.html()</li>
+        <li>org.jsoup.select.Elements.iterator()</li>
+        <li>com.snicesoft.jsoupcrawler.config.entity.Column.function  (javax.script.Invocable,java.lang.String,java.lang.Object[])</li>
+        <li>com.snicesoft.jsoupcrawler.config.entity.Column.getAttr()</li>
+        <li>com.snicesoft.jsoupcrawler.config.entity.Column.getFun()</li>
+        <li>com.snicesoft.jsoupcrawler.config.entity.Column.getName()</li>
+        <li>com.snicesoft.jsoupcrawler.config.entity.Column.getTag()</li>
+        <li>com.snicesoft.jsoupcrawler.config.entity.Info.getColumns()</li>
+        <li>com.snicesoft.jsoupcrawler.config.entity.Info.getRootTag()</li>
+        <li>com.snicesoft.jsoupcrawler.core.ICrawler.getListener()</li>
+        <li>com.snicesoft.jsoupcrawler.core.ICrawler.getUrl (com.snicesoft.jsoupcrawler.config.entity.Info,int)</li>
+        <li>com.snicesoft.jsoupcrawler.core.ICrawler.userAgent()</li>
+        <li>com.snicesoft.jsoupcrawler.listener.DataAcceptListener.accept (com.snicesoft.jsoupcrawler.config.entity.Info,int,java.util.Map)</li>
+        <li>com.gargoylesoftware.htmlunit.WebClient.WebClient (com.gargoylesoftware.htmlunit.BrowserVersion)</li>
+      </ol>
+    </div>
+  </div>
+
+  <hr class="style2">
+    <div class="row">
+    <div class="col-sm-12 text-center">
+      <h4>getWinningAwayTeams</h4>
+    </div>
+  </div>  
+  <div class="row" id="query3">
+    <div class="col-sm-4">
+        <pre class="prettyprint">
+  /*
+   * Scrape livescore web site: extract the list of
+   * away teams that won the match and print them to the console.
+   * Use "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)" as user agent string.
+   * Extract the required information from https://mdegroup.github.io/FOCUS-Appendix/livescore.html
+   */
+  public static List<String> getWinningAwayTeams() throws IOException {
+    String url = "https://mdegroup.github.io/FOCUS-Appendix/livescore.html";
+    Document document = Jsoup.connect(url).get();
+    Elements scores = document.getElementsByClass("sco");
+    scores.parents();
+    //COMPLETE THE METHOD    
+  }
+          </pre>
+    </div>
+    <div class="col-sm-4">
+      <br/><button data-toggle="collapse" data-target="#q3_1">Result 1</button>
+      <div class="row collapse" id="q3_1">
+        <pre class="prettyprint">
+  public Document crawl(String method, String url) {
+    Document doc = null;
+    
+    if (url == null) {
+      logger.warn("url is null");
+      return doc;
+    }
+    
+    try {
+      Connection conn = Jsoup.connect(url);
+      for (String key : headers.keySet()) {
+        conn.header(key, headers.get(key));
+      }
+      conn.ignoreContentType(true);
+      conn.timeout(5 * 1000);
+      
+      if (HTTPConstants.Method.GET.equals(method)) {
+        doc = conn.get();
+      } else if (HTTPConstants.Method.POST.equals(method)) {
+        doc = conn.post();
+      }
+    } catch (Exception e) {
+      logger.warn(e.getMessage());
+    }
+    
+    return doc;
+  }
+        </pre>
+      </div>
+      <br/>
+      <button data-toggle="collapse" data-target="#q3_2">Result 2</button>
+      <div class="row collapse" id="q3_2">
+        <pre class="prettyprint">
+  private void getConnection(Info info, int position, String funName) {
+    try {
+      Document document = Jsoup.connect(getUrl(info, position)).userAgent(userAgent()).get();
+      Elements elements = null;
+      if (info.getRootTag() != null && !"".equals(info.getRootTag())) {
+        elements = document.select(info.getRootTag()).first().children();
+      } else {
+        elements = document.children();
+      }
+      for (Element ele : elements) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        for (Column column : info.getColumns()) {
+          Object data = null;
+          if (column.getAttr() == null || "html".equals(column.getAttr()))
+            data = ele.select(column.getTag()).html();
+          else
+            data = ele.select(column.getTag()).attr(column.getAttr());
+          if (column.getFun() != null && !"".equals(column.getFun()))
+            data = column.function(invocable, funName, data);
+          map.put(column.getName(), data);
+        }
+        if (getListener() != null) {
+          getListener().accept(info, position, map);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+        </pre>
+      </div>
+      <br/>
+      <button data-toggle="collapse" data-target="#q3_3">Result 3</button>
+      <div class="row collapse" id="q3_3">
+        <pre class="prettyprint">
+    /**
+     * Sets the URL.
+     * @param    String    the URL 
+     * @return             true if connection to URL is successful 
+     */
+    public boolean connect(String url) {      
+      
+      try {
+        this.url = url;
+        this.document = Jsoup.connect(url).get();
+        
+        Path path = Paths.get(url);
+        
+        File rootFile = new File(this.htmlDirectory.getAbsolutePath() + "/" + path.getName(path.getNameCount() - 1));
+        FileUtils.copyURLToFile(new URL(url), rootFile);
+        
+        return true;
+        
+      } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+      }
+    }
+        </pre>
+      </div>
+      <br>
+      <button data-toggle="collapse" data-target="#q3_4">Result 4</button>
+      <div class="row collapse" id="q3_4">
+        <pre class="prettyprint">
+    /*
+     * Bridge method used by donkey.js
+     */
+    public Document jsoup(String url) {
+        try {
+            filterHostBlocker();
+
+            URL u = new URL(url);
+            long li = lastInteraction.getOrDefault(u.getHost(), 0l);
+            long delta = System.currentTimeMillis() - li;
+            if (delta < 1000) {
+                Wait.randomMillis(1000, 2000);
+            }
+            lastInteraction.put(u.getHost(), System.currentTimeMillis());
+
+            return Jsoup.connect(url)
+                        .userAgent("Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)")
+                        .followRedirects(true)
+                        .get();
+        } catch (IOException e) {
+            Exceptions.handle(LOG, e);
+            return null;
+        }
+    }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q3_5">Result 5</button>
+      <div class="row collapse" id="q3_5">
+        <pre class="prettyprint">
+  /*
+   * (non-Javadoc)
+   * @see org.phoenix.api.action.APIAction#getResponseByJsoup(java.lang.String, java.lang.String, java.util.HashMap, java.util.HashMap, java.util.HashMap, boolean, java.lang.String)
+   */
+  @Override
+  public Response getResponseByJsoup(String url, String method,
+      HashMap<String, String> cookies, HashMap<String, String> datas,
+      HashMap<String, String> headers, boolean isFollowRedirects,
+      String userAgent) {
+    Connection conn = Jsoup.connect(url);
+    if(headers != null){
+      for(Entry<String,String> e:headers.entrySet()){
+        conn.header(e.getKey(), e.getValue());
+      }
+    }
+    if(datas != null) conn.data(datas);
+    if(cookies != null)conn.cookies(cookies);
+    if(userAgent != null)conn.userAgent(userAgent);
+    conn.followRedirects(isFollowRedirects);
+    if(method.equalsIgnoreCase("GET"))conn.method(Method.GET);
+    else if(method.equalsIgnoreCase("POST"))conn.method(Method.POST);
+    try {
+      return conn.execute();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+        </pre>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      
+      <br/><button data-toggle="collapse" data-target="#afc3">API function calls</button>
+      
+      <ol class="afc collapse" id="afc3">
+        <li>org/jsoup/Connection/userAgent(java.lang.String)</li>
+        <li>org/jsoup/nodes/Document/children()</li>
+        <li>org/jsoup/nodes/Document/select(java.lang.String)</li>
+        <li>org/jsoup/nodes/Element/children()</li>
+        <li>org/jsoup/nodes/Element/select(java.lang.String)</li>
+        <li>org/jsoup/select/Elements/attr(java.lang.String)</li>
+        <li>org/jsoup/select/Elements/first()</li>
+        <li>org/jsoup/select/Elements/html()</li>
+        <li>org/jsoup/select/Elements/iterator()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/function (javax.script.Invocable,java.lang.String,java.lang.Object%5B%5D)</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getAttr()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getFun()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getName()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getTag()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Info/getColumns()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Info/getRootTag()</li>
+        <li>com/snicesoft/jsoupcrawler/core/ICrawler/getListener()</li>
+        <li>com/snicesoft/jsoupcrawler/core/ICrawler/getUrl (com.snicesoft.jsoupcrawler.config.entity.Info,int)</li>
+        <li>com/snicesoft/jsoupcrawler/core/ICrawler/userAgent()</li>
+        <li>com/snicesoft/jsoupcrawler/listener/DataAcceptListener/accept (com.snicesoft.jsoupcrawler.config.entity.Info,int,java.util.Map)</li>
+
+      </ol>
+    </div>
+  </div>
+  <hr class="style2">
+  <div class="row">
+    <div class="col-sm-12 text-center">
+      <h4>getDayWithBiggerTemperatureDifference</h4>
+    </div>
+  </div>
+
+  <div class="row" id="query4">
+    <div class="col-sm-4">
+        <pre class="prettyprint">
+ /*
+   * Scrape a weather web site: returns the name of the day (i.e., "Martedì 29")
+   * that has the bigger temperature difference.
+   * Extract the required information from https://mdegroup.github.io/FOCUS-Appendix/meteo.html
+   */
+  public static String getDayWithBiggerTemperatureDifference() throws IOException {
+    String url = "https://mdegroup.github.io/FOCUS-Appendix/meteo.html";
+    Document document = Jsoup.connect(url).get();
+    Elements weathers = document.select("span.dayDate");
+    //COMPLETE THE METHOD
+  }
+          </pre>
+    </div>
+    <div class="col-sm-4">
+      <br/><button data-toggle="collapse" data-target="#q4_1">Result 1</button>
+      <div class="row collapse" id="q4_1">
+        <pre class="prettyprint">
+  public List<Log> getLogList() {
+     Elements logList = isChildNode 
+        ? test.select(".collapsible-body tbody > tr") 
+        : test.select(".test-body > .test-steps > table > tbody > tr");
+        
+        ArrayList<Log> extentLogList = new ArrayList<Log>();
+        Log extentLog;
+        
+        for (Element log : logList) {
+            extentLog = new Log();
+            
+            extentLog.setTimestamp(
+                    DateTimeUtil.getDate(
+                            log.select(".timestamp").first().text(), 
+                            getLogTimeFormat()
+                    )
+            );
+            
+            if (log.select(".step-name").size() == 1) {
+                extentLog.setStepName(log.select(".step-name").first().text());
+            }
+            
+            LogStatus status = getStatusStringMarkup(log.select(".status").first());
+            extentLog.setLogStatus(status);
+            
+            extentLog.setDetails(log.select(".step-details").first().html());
+            
+            extentLogList.add(extentLog);
+        }
+        
+        return extentLogList;
+  }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q4_2">Result 2</button>
+      <div class="row collapse" id="q4_2">
+        <pre class="prettyprint">
+    /*
+     * Bridge method used by donkey.js
+     */
+    public Document jsoup(String url) {
+        try {
+            filterHostBlocker();
+
+            URL u = new URL(url);
+            long li = lastInteraction.getOrDefault(u.getHost(), 0l);
+            long delta = System.currentTimeMillis() - li;
+            if (delta < 1000) {
+                Wait.randomMillis(1000, 2000);
+            }
+            lastInteraction.put(u.getHost(), System.currentTimeMillis());
+
+            return Jsoup.connect(url)
+                        .userAgent("Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)")
+                        .followRedirects(true)
+                        .get();
+        } catch (IOException e) {
+            Exceptions.handle(LOG, e);
+            return null;
+        }
+    }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q4_3">Result 3</button>
+      <div class="row collapse" id="q4_3">
+        <pre class="prettyprint">
+  protected String getCSSSource(String htmlSource) throws Exception {
+    org.jsoup.nodes.Document htmlDocument = Jsoup.parse(htmlSource);
+
+    Elements elements = htmlDocument.select("link[type=text/css]");
+
+    StringBuilder sb = new StringBuilder();
+
+    for (Element element : elements) {
+      String href = element.attr("href");
+
+      if (!href.contains(PropsValues.PORTAL_URL)) {
+        href = PropsValues.PORTAL_URL + href;
+      }
+
+      Connection connection = Jsoup.connect(href);
+
+      org.jsoup.nodes.Document document = connection.get();
+
+      sb.append(document.text());
+
+      sb.append("\n");
+    }
+
+    return sb.toString();
+  }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q4_4">Result 4</button>
+      <div class="row collapse" id="q4_4">
+        <pre class="prettyprint">
+  private void getConnection(Info info, int position, String funName) {
+    try {
+      Document document = Jsoup.connect(getUrl(info, position)).userAgent(userAgent()).get();
+      Elements elements = null;
+      if (info.getRootTag() != null && !"".equals(info.getRootTag())) {
+        elements = document.select(info.getRootTag()).first().children();
+      } else {
+        elements = document.children();
+      }
+      for (Element ele : elements) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        for (Column column : info.getColumns()) {
+          Object data = null;
+          if (column.getAttr() == null || "html".equals(column.getAttr()))
+            data = ele.select(column.getTag()).html();
+          else
+            data = ele.select(column.getTag()).attr(column.getAttr());
+          if (column.getFun() != null && !"".equals(column.getFun()))
+            data = column.function(invocable, funName, data);
+          map.put(column.getName(), data);
+        }
+        if (getListener() != null) {
+          getListener().accept(info, position, map);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+        </pre>
+      </div>
+      <br/><button data-toggle="collapse" data-target="#q4_5">Result 5</button>
+      <div class="row collapse" id="q4_5">
+        <pre class="prettyprint">
+  private String[] parse(final String command) {
+    final Pattern pattern = Pattern.compile("\"([^\"]*)\"|(\\S+)");
+    final Matcher matcher = pattern.matcher(command);
+    final List<String> tokens = new ArrayList<String>();
+    while (matcher.find()) {
+      if (matcher.group(1) == null) {
+        tokens.add(matcher.group());
+      }
+      else {
+        tokens.add(matcher.group(1));
+      }
+    }
+    return tokens.toArray(new String[tokens.size()]);
+  }
+        </pre>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <br/><button data-toggle="collapse" data-target="#afc4">API function calls</button>
+      <ol class="afc collapse" id="afc4">
+        <li>org/jsoup/Connection/userAgent(java.lang.String)</li>
+        <li>org/jsoup/nodes/Document/children()</li>
+        <li>org/jsoup/nodes/Document/select(java.lang.String)</li>
+        <li>org/jsoup/nodes/Element/children()</li>
+        <li>org/jsoup/select/Elements/attr(java.lang.String)</li>
+        <li>org/jsoup/select/Elements/first()</li>
+        <li>org/jsoup/select/Elements/html()</li>
+        <li>org/jsoup/select/Elements/iterator()</li>
+        <li>pl/matsuo/maven/skins/msb3/HtmlTool/parseContent(java.lang.String)</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/function (javax.script.Invocable,java.lang.String,java.lang.Object%5B%5D)</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getAttr()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getFun()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getName()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Column/getTag()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Info/getColumns()</li>
+        <li>com/snicesoft/jsoupcrawler/config/entity/Info/getRootTag()</li>
+        <li>com/snicesoft/jsoupcrawler/core/ICrawler/getListener()</li>
+        <li>com/snicesoft/jsoupcrawler/core/ICrawler/getUrl (com.snicesoft.jsoupcrawler.config.entity.Info,int)</li>
+        <li>com/snicesoft/jsoupcrawler/core/ICrawler/userAgent()</li>
+        <li>com/snicesoft/jsoupcrawler/listener/DataAcceptListener/accept (com.snicesoft.jsoupcrawler.config.entity.Info,int,java.util.Map)</li>
+      </ol>
+    </div>
+  </div>
+
+  <hr class="style2">
+</div>
+
+
+
+
+</body>
+</html>
