@@ -33,6 +33,7 @@
           <li>Download and install Eclipse (https://www.eclipse.org/downloads/ and choose
 the JEE distribution)</li>
           <li>Be sure to have JRE and JDK software on your machine</li>
+          <li>We did not provide a public installation of the server component. You can install the CROSSMINER platform by the docker configuration available at <a href="https://github.com/eclipse-researchlabs/scava-deployment/tree/dev">scava deployment GitHub repository</a> </li>
         </ul>
        </div>
 
@@ -42,10 +43,10 @@ the JEE distribution)</li>
       <h3>FOCUS Plugin Installation</h3>
         There are the following steps:
         <ol>
-          <li>Go to Help->Install new software<br/><img src="fig/install-1.png" width="30%" /></li></li></li>
+          <li>Go to Help->Install new software<br/><img src="fig/install-1.png" width="15%" /></li></li></li>
           <li>Choose Add and put this site in Location:
             <a href="http://ci5.castalia.camp:8080/job/scava-ide/job/dev/lastSuccessfulBuild/artifact/eclipse-based-ide/org.eclipse.scava.root/releng/org.eclipse.scava.update/target/repository/">Update site</a><br/>
-            <img src="fig/install-2.png" width="50%" /></li></li>
+            <img src="fig/install-2.png" width="40%" /></li></li>
           </li>
           <!--<li>Important: Be sure to avoid the usage of University connection for all these operations</li>-->
           <li>Check CROSSMINER Eclipse-based IDE and choose Next->Install</li>
@@ -53,15 +54,17 @@ the JEE distribution)</li>
           <li>Go to Window->Preferences->CROSSMINER->Remote settings and choose the
           following configuration:
             <ol type="a">
-              <li>KnowledgeBase server address->http://178.238.238.209</li>
-              <li>KnowledgeBase server port -> 8099</li>
-              <li>WebDashboard base path -> https://crossminer.biterg.io<br/>
-                <img src="fig/config-1.png" width="50%" />
+              <li>The IP where the CROSSMINER platform has been deployed</li>
+              <li>The default port is 8080</li>
+              <li>Skip the <i>WebDashboard base path</i> settings
+                
               </li>
-              <li>set the FOCUS timeouts to 900000<br/>
-                <img src="fig/config-2.png" width="50%" />
-              </li>
+              
+              <li>set the FOCUS timeouts to 900000<br/><img src="fig/config-1.png" width="20%" />
+              <img src="fig/config-2.png" width="20%" /></li>
             </ol>
+
+              
 
             <li>After you select the code, you can do Right click->CROSSMINER->Request FOCUS Code Snippet recommendation and you got something like that:
               <br/>
